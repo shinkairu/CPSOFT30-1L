@@ -1,0 +1,18 @@
+[theme]
+primaryColor = "#FF6B6B"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#262730"
+
+[server]
+maxUploadSize = 200
+
+[ui]
+hideTopBar = false
+hideSidebarNav = false
+
+[global]
+developmentMode = false
+
+[browser]
+gatherUsageStats = false
