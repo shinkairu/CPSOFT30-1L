@@ -10,12 +10,13 @@ import uuid
 import hashlib
 from datetime import datetime, timedelta
 
-# Database connection helper (cached for performance)
+# Database connection helper (cached for performance; DO NOT close manually)
 @st.cache_resource
 def get_conn():
     try:
         conn = sqlite3.connect('logistics.db', check_same_thread=False)
-        conn.execute("PRAGMA foreign_keys = OFF")  # Disable FK for demo to avoid init errors
+        conn.execute("PRAGMA foreign_keys = OFF")  # Disable FK for demo
+        conn.execute("PRAGMA synchronous = OFF")   # Faster writes on Cloud
         return conn
     except Exception as e:
         st.error(f"Database connection failed: {e}")
@@ -25,17 +26,17 @@ def get_conn():
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-# Initialize database with tables and sample data
+# Initialize database with tables and sample data (uses NON-CACHED conn to avoid cache issues)
 def init_db():
-    conn = get_conn()
-    if not conn:
-        st.error("Cannot initialize database. Check permissions or file system.")
-        return
-
+    # Use a fresh, non-cached connection for init only
+    init_conn = None
     try:
-        c = conn.cursor()
+        init_conn = sqlite3.connect('logistics.db', check_same_thread=False)
+        init_conn.execute("PRAGMA foreign_keys = OFF")
+        init_conn.execute("PRAGMA synchronous = OFF")
+        c = init_conn.cursor()
         
-        # Create users table (simplified, no FK for demo)
+        # Create users table
         c.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,7 +45,7 @@ def init_db():
             )
         ''')
         
-        # Create shipments table (simplified, no FK for demo)
+        # Create shipments table
         c.execute('''
             CREATE TABLE IF NOT EXISTS shipments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +60,7 @@ def init_db():
             )
         ''')
         
-        # Create orders table (simplified, no FK for demo)
+        # Create orders table
         c.execute('''
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,25 +71,25 @@ def init_db():
             )
         ''')
         
-        conn.commit()  # Commit table creations
+        init_conn.commit()  # Commit table creations
         
-        # Insert default users if they don't exist (hashed passwords)
+        # Insert default users if they don't exist
         default_users = [
             ('admin', hash_password('admin')),
             ('user', hash_password('user'))
         ]
+        init_conn.execute("BEGIN")  # Start transaction for users
         for username, password_hash in default_users:
             try:
                 c.execute(
                     "INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)",
                     (username, password_hash)
                 )
-            except sqlite3.IntegrityError as e:
-                st.warning(f"User  {username} already exists: {e}")
+            except sqlite3.IntegrityError:
+                pass  # Already exists
+        init_conn.commit()
         
-        conn.commit()
-        
-        # Get user IDs (fetch safely)
+        # Get user IDs
         c.execute("SELECT id FROM users WHERE username='admin'")
         admin_id_result = c.fetchone()
         admin_id = admin_id_result[0] if admin_id_result else None
@@ -98,46 +99,38 @@ def init_db():
         user_id = user_id_result[0] if user_id_result else None
 
         if not admin_id or not user_id:
-            st.error("Failed to initialize default users. Check database.")
-            conn.close()
+            st.error("Failed to initialize default users.")
+            init_conn.close()
             return
 
-        # Sample shipments and orders (only insert if no shipments exist to avoid duplicates)
+        # Sample shipments and orders (only if no shipments)
         c.execute("SELECT COUNT(*) FROM shipments")
         shipment_count = c.fetchone()[0]
         if shipment_count == 0:
-            # Sample data: 5 for admin, 3 for user; varied statuses and dates
+            init_conn.execute("BEGIN")  # Transaction for samples
             sample_data = [
-                # Admin shipments
+                # Admin shipments (5)
                 (admin_id, 'John Doe', 'Jane Smith', 'New York', 'Los Angeles', 'Pending', datetime.now() - timedelta(days=5)),
                 (admin_id, 'Alice Johnson', 'Bob Wilson', 'Chicago', 'Miami', 'In Transit', datetime.now() - timedelta(days=3)),
                 (admin_id, 'Charlie Brown', 'Diana Prince', 'Seattle', 'Boston', 'Delivered', datetime.now() - timedelta(days=1)),
                 (admin_id, 'Eve Davis', 'Frank Miller', 'Denver', 'Atlanta', 'Pending', datetime.now()),
                 (admin_id, 'Grace Lee', 'Henry Taylor', 'Phoenix', 'Detroit', 'In Transit', datetime.now() - timedelta(days=2)),
-                # User shipments
+                # User shipments (3)
                 (user_id, 'User  Sender1', 'User  Receiver1', 'Dallas', 'Portland', 'Delivered', datetime.now() - timedelta(days=4)),
                 (user_id, 'User  Sender2', 'User  Receiver2', 'Austin', 'Nashville', 'Pending', datetime.now() - timedelta(days=6)),
                 (user_id, 'User  Sender3', 'User  Receiver3', 'Houston', 'Memphis', 'In Transit', datetime.now())
             ]
 
             sample_orders = [
-                ('Electronics', 5, 500.0),
-                ('Clothing', 10, 200.0),
-                ('Books', 20, 100.0),
-                ('Furniture', 2, 800.0),
-                ('Groceries', 50, 150.0),
-                ('Tools', 3, 300.0),
-                ('Toys', 15, 75.0),
-                ('Appliances', 1, 1000.0)
+                ('Electronics', 5, 500.0), ('Clothing', 10, 200.0), ('Books', 20, 100.0),
+                ('Furniture', 2, 800.0), ('Groceries', 50, 150.0), ('Tools', 3, 300.0),
+                ('Toys', 15, 75.0), ('Appliances', 1, 1000.0)
             ]
 
             success_count = 0
             for i, (u_id, sender, receiver, origin, dest, status, created) in enumerate(sample_data):
                 try:
-                    # Generate unique tracking ID
                     tracking_id = str(uuid.uuid4()).replace('-', '')[:8].upper()
-                    
-                    # Insert shipment
                     c.execute(
                         """INSERT INTO shipments 
                         (user_id, sender_name, receiver_name, origin, destination, status, tracking_id, created_date) 
@@ -146,7 +139,6 @@ def init_db():
                     )
                     shipment_id = c.lastrowid
                     
-                    # Insert corresponding order (cycle through sample_orders)
                     order_idx = i % len(sample_orders)
                     items, qty, cost = sample_orders[order_idx]
                     c.execute(
@@ -154,27 +146,37 @@ def init_db():
                         (shipment_id, items, qty, cost)
                     )
                     success_count += 1
-                except sqlite3.IntegrityError as e:
-                    st.warning(f"Skipping duplicate sample shipment {i+1}: {e}")
-                except Exception as e:
-                    st.error(f"Error inserting sample shipment {i+1}: {e}")
+                except sqlite3.IntegrityError:
+                    pass  # Skip duplicates
+                except Exception as insert_e:
+                    st.warning(f"Skipping sample {i+1}: {insert_e}")
+                    continue
 
-            conn.commit()
+            init_conn.commit()
             if success_count > 0:
-                st.success(f"Database initialized with {success_count} sample shipments.")
+                st.success(f"Initialized with {success_count} sample shipments.")
             else:
-                st.warning("No sample data inserted (possible DB issue).")
+                st.warning("No samples added (DB may already have data).")
 
     except sqlite3.ProgrammingError as e:
-        st.error(f"SQL ProgrammingError in init_db: {e}. Check table syntax or DB state.")
-        conn.rollback()
+        st.error(f"SQL error in init_db: {e}")
+        if init_conn:
+            try:
+                init_conn.rollback()
+            except:
+                pass  # Ignore if already closed
     except Exception as e:
-        st.error(f"Unexpected error in init_db: {e}")
-        conn.rollback()
+        st.error(f"Unexpected init error: {e}")
+        if init_conn:
+            try:
+                init_conn.rollback()
+            except:
+                pass
     finally:
-        conn.close()
+        if init_conn:
+            init_conn.close()  # Safe to close non-cached init conn
 
-# Login function (handles form and session state)
+# Login function (uses cached conn; NO close)
 def handle_login():
     if st.session_state.get('logged_in', False):
         return True
@@ -189,7 +191,7 @@ def handle_login():
         if username and password:
             conn = get_conn()
             if not conn:
-                st.error("Database connection failed during login.")
+                st.error("Database unavailable.")
                 return False
             try:
                 c = conn.cursor()
@@ -199,7 +201,6 @@ def handle_login():
                     (username, password_hash)
                 )
                 user = c.fetchone()
-                conn.close()
                 
                 if user:
                     st.session_state.logged_in = True
@@ -210,13 +211,13 @@ def handle_login():
                     st.rerun()
                     return True
                 else:
-                    st.error("Invalid username or password.")
+                    st.error("Invalid credentials.")
+            except sqlite3.ProgrammingError as e:
+                st.error(f"Login SQL error: {e}")
             except Exception as e:
                 st.error(f"Login error: {e}")
-                if conn:
-                    conn.close()
         else:
-            st.error("Please enter username and password.")
+            st.error("Enter username and password.")
     
     return False
 
@@ -226,7 +227,7 @@ def logout():
         del st.session_state[key]
     st.rerun()
 
-# Get user's shipments as DataFrame (with optional orders join)
+# Get user's shipments as DataFrame (uses cached conn; NO close)
 def get_user_shipments_df(conn, user_id):
     if not conn:
         return pd.DataFrame()
@@ -239,10 +240,10 @@ def get_user_shipments_df(conn, user_id):
         """
         return pd.read_sql(query, conn, params=(user_id,))
     except Exception as e:
-        st.error(f"Error fetching user shipments: {e}")
+        st.error(f"Error fetching user data: {e}")
         return pd.DataFrame()
 
-# Get all shipments as DataFrame (with optional orders join)
+# Get all shipments as DataFrame (uses cached conn; NO close)
 def get_all_shipments_df(conn, include_orders=False):
     if not conn:
         return pd.DataFrame()
@@ -258,5 +259,5 @@ def get_all_shipments_df(conn, include_orders=False):
             query = "SELECT * FROM shipments"
             return pd.read_sql(query, conn)
     except Exception as e:
-        st.error(f"Error fetching shipments: {e}")
+        st.error(f"Error fetching data: {e}")
         return pd.DataFrame()
