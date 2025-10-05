@@ -1,0 +1,16 @@
+# Database and local files
+*.db
+*.sqlite
+
+# Python cache
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Streamlit secrets/config (if any)
+.streamlit/secrets.toml
+
+# OS-specific
+.DS_Store
+Thumbs.db
