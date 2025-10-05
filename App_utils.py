@@ -68,16 +68,4 @@ def init_db():
     ]
     for username, password_hash in default_users:
         c.execute(
-            "INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)",
-            (username, password_hash)
-        )
-    conn.commit()
-    
-    # Get user IDs (admin=1, user=2 assuming insertion order)
-    c.execute("SELECT id FROM users WHERE username='admin'")
-    admin_id_result = c.fetchone()
-    admin_id = admin_id_result[0] if admin_id_result else 1
-
-    c.execute("SELECT id FROM users WHERE username='user'")
-    user_id_result = c.fetchone()
-    user_id
+            "INSERT OR IGNORE INTO users (username, password) VALUES
