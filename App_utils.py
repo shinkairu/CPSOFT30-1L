@@ -173,4 +173,18 @@ def get_orders():
     """Get all orders DataFrame."""
     conn = get_connection()
     df = pd.read_sql_query("SELECT * FROM Orders", conn)
-    conn
+    conn.close()
+    return df
+
+def get_user_shipments(username):
+    """Get user's shipments DataFrame."""
+    conn = get_connection()
+    df = pd.read_sql_query("SELECT * FROM Shipments WHERE user_id = ?", conn, params=(username,))
+    conn.close()
+    return df
+
+def get_all_data_for_dashboard():
+    """Get shipments and orders DataFrames for dashboard."""
+    shipments_df = get_shipments()
+    orders_df = get_orders()
+    return shipments_df, orders_df
