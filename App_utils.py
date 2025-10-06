@@ -115,3 +115,112 @@ def init_db():
                     INSERT INTO Orders (shipment_id, items, quantity, total_cost)
                     VALUES (?, ?, ?, ?)
                 """, (shipment_id, items, quantity, total_cost))
+            except sqlite3.IntegrityError:
+                pass
+
+    conn.commit()
+    conn.close()
+
+def add_user(username: str, password: str, role: str = 'user') -> bool:
+    """
+    Add a new user. Returns True if added, False if username exists.
+    (Plain-text password used for demo only. In production, hash passwords.)
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO Users (username, password, role) VALUES (?, ?, ?)", (username, password, role))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+    finally:
+        conn.close()
+
+def get_user(username: str) -> Optional[sqlite3.Row]:
+    """Return user row (sqlite Row) or None."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Users WHERE username = ?", (username,))
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
+def authenticate_user(username: str, password: str) -> Optional[str]:
+    """
+    Authenticate user (plain-text for demo). Returns role string on success, otherwise None.
+    """
+    user = get_user(username)
+    if user and user['password'] == password:
+        return user['role']
+    return None
+
+def add_shipment(sender_name: str, receiver_name: str, origin: str, destination: str, status: str, tracking_id: str, created_date: str, user_id: str) -> int:
+    """Insert a new shipment and return its id."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO Shipments (sender_name, receiver_name, origin, destination, status, tracking_id, created_date, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (sender_name, receiver_name, origin, destination, status, tracking_id, created_date, user_id))
+    shipment_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return shipment_id
+
+def get_shipments(tracking_id: Optional[str] = None) -> pd.DataFrame:
+    """Return shipments as a pandas DataFrame. If tracking_id provided, filter by it."""
+    conn = get_connection()
+    if tracking_id:
+        df = pd.read_sql_query("SELECT * FROM Shipments WHERE tracking_id = ?", conn, params=(tracking_id,))
+    else:
+        df = pd.read_sql_query("SELECT * FROM Shipments", conn)
+    conn.close()
+    return df
+
+def update_shipment_status(tracking_id: str, new_status: str) -> None:
+    """Update shipment status by tracking_id."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE Shipments SET status = ? WHERE tracking_id = ?", (new_status, tracking_id))
+    conn.commit()
+    conn.close()
+
+def add_order(shipment_id: int, items: str, quantity: int, total_cost: float) -> int:
+    """Insert an order linked to a shipment and return the new order id."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO Orders (shipment_id, items, quantity, total_cost)
+        VALUES (?, ?, ?, ?)
+    """, (shipment_id, items, quantity, total_cost))
+    order_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return order_id
+
+def get_orders() -> pd.DataFrame:
+    """Return all orders as a DataFrame."""
+    conn = get_connection()
+    df = pd.read_sql_query("SELECT * FROM Orders", conn)
+    conn.close()
+    return df
+
+def get_user_shipments(username: str) -> pd.DataFrame:
+    """Return shipments associated with the given username."""
+    conn = get_connection()
+    df = pd.read_sql_query("SELECT * FROM Shipments WHERE user_id = ?", conn, params=(username,))
+    conn.close()
+    return df
+
+def get_all_data_for_dashboard() -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Return shipments_df and orders_df for dashboard analytics."""
+    shipments_df = get_shipments()
+    orders_df = get_orders()
+    # ensure datetime column parsed for sorting if exists
+    if 'created_date' in shipments_df.columns:
+        try:
+            shipments_df['created_date'] = pd.to_datetime(shipments_df['created_date'])
+        except Exception:
+            pass
+    return shipments_df, orders_df
