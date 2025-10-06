@@ -1,7 +1,16 @@
+"""
+TrackSwift.py
+Main Streamlit app for TrackSwift: Online Logistics Platform
+
+Run with:
+    streamlit run TrackSwift.py
+"""
 import streamlit as st
 import pandas as pd
 from datetime import datetime
 import uuid
+
+# Import utilities (fixed names/signatures)
 from App_utils import (
     init_db, add_user, get_user, authenticate_user,
     add_shipment, get_shipments, update_shipment_status,
@@ -48,7 +57,7 @@ def login_page():
             st.session_state.username = username
             st.session_state.role = role
             st.success(f"Welcome, {username}!")
-            st.rerun()
+            st.experimental_rerun()
         else:
             st.error("Invalid credentials. Try again.")
 
@@ -66,7 +75,7 @@ def main_app():
         st.session_state.logged_in = False
         st.session_state.username = None
         st.session_state.role = None
-        st.rerun()
+        st.experimental_rerun()
 
     # Role-based access info
     st.sidebar.info(f"Logged in as: {st.session_state.username} ({st.session_state.role})")
@@ -120,15 +129,16 @@ def dashboard_page():
     # Simple table for recent shipments (last 5)
     if not shipments_df.empty:
         st.subheader("Recent Shipments")
-        recent = shipments_df.tail(5)[['tracking_id', 'sender_name', 'status', 'created_date']]
+        recent = shipments_df.sort_values('created_date').tail(5)[['tracking_id', 'sender_name', 'status', 'created_date']]
         st.dataframe(recent)
 
 # Add Shipment Page
 def add_shipment_page():
     st.header("📦 Add New Shipment")
+    # If user role is not admin/manager/shipper allow only own shipments — demo logic
     if st.session_state.role == 'user' and st.session_state.username not in ['admin', 'manager']:
         st.warning("Basic users can only add their own shipments.")
-    
+
     with st.form("shipment_form"):
         sender_name = st.text_input("Sender Name")
         receiver_name = st.text_input("Receiver Name")
@@ -136,8 +146,8 @@ def add_shipment_page():
         destination = st.text_input("Destination")
         status = st.selectbox("Initial Status", ['Pending', 'In Transit'])
         items = st.text_input("Items (comma-separated, e.g., Laptop, Books)")
-        quantity = st.number_input("Quantity", min_value=1)
-        total_cost = st.number_input("Total Cost ($)", min_value=0.0)
+        quantity = st.number_input("Quantity", min_value=1, value=1)
+        total_cost = st.number_input("Total Cost ($)", min_value=0.0, value=0.0)
 
         submitted = st.form_submit_button("Add Shipment")
         if submitted:
@@ -145,13 +155,13 @@ def add_shipment_page():
                 # Generate tracking ID
                 tracking_id = str(uuid.uuid4()).hex[:8].upper()
                 created_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                
+
                 # Add shipment
                 shipment_id = add_shipment(sender_name, receiver_name, origin, destination, status, tracking_id, created_date, st.session_state.username)
-                
+
                 # Add order
-                add_order(shipment_id, items, quantity, total_cost)
-                
+                add_order(shipment_id, items, int(quantity), float(total_cost))
+
                 st.success(f"Shipment added! Tracking ID: {tracking_id}")
                 st.balloons()
             else:
@@ -160,9 +170,13 @@ def add_shipment_page():
 # Track Shipment Page
 def track_shipment_page():
     st.header("🔍 Track Shipment")
-    tracking_id = st.text_input("Enter Tracking ID").upper()
-    
+    tracking_id = st.text_input("Enter Tracking ID").upper().strip()
+
     if st.button("Track"):
+        if not tracking_id:
+            st.error("Please enter a Tracking ID.")
+            return
+
         shipment = get_shipments(tracking_id=tracking_id)
         if not shipment.empty:
             st.success("Shipment found!")
@@ -175,14 +189,14 @@ def track_shipment_page():
             with col2:
                 st.write(f"**Status:** {shipment.iloc[0]['status']}")
                 st.write(f"**Created:** {shipment.iloc[0]['created_date']}")
-            
+
             # Status update for admin/manager
             if st.session_state.role in ['admin', 'manager']:
-                new_status = st.selectbox("Update Status", ['Pending', 'In Transit', 'Delivered'], key="update")
+                new_status = st.selectbox("Update Status", ['Pending', 'In Transit', 'Delivered'], index=['Pending', 'In Transit', 'Delivered'].index(shipment.iloc[0]['status']) if shipment.iloc[0]['status'] in ['Pending', 'In Transit', 'Delivered'] else 0, key="update")
                 if st.button("Update Status"):
                     update_shipment_status(tracking_id, new_status)
                     st.success(f"Status updated to {new_status}!")
-                    st.rerun()
+                    st.experimental_rerun()
             else:
                 st.info("Only admins/managers can update status.")
         else:
@@ -213,7 +227,7 @@ def view_orders_page():
         if st.button("Save Changes"):
             # For demo, just show success (in real app, update DB row-by-row)
             st.success("Changes saved! (Demo mode - updates reflected on refresh)")
-            st.rerun()
+            st.experimental_rerun()
     else:
         if st.session_state.role not in ['admin', 'manager']:
             st.info("Basic users can view but not edit.")
@@ -228,7 +242,7 @@ def profile_page():
     if not user_shipments.empty:
         st.subheader("Your Shipments")
         st.dataframe(user_shipments[['tracking_id', 'status', 'created_date']])
-        
+
         # User-specific metrics
         total_user = len(user_shipments)
         pending_user = len(user_shipments[user_shipments['status'] == 'Pending'])
