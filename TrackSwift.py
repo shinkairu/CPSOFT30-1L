@@ -25,51 +25,6 @@ st.set_page_config(
     layout="wide"
 )
 
-st.markdown("""
-    <style>
-        /* Sidebar background */
-        [data-testid="stSidebar"] {
-            background: linear-gradient(180deg, #1a1a2e, #16213e);
-            color: white !important;
-        }
-
-        /* Main page background */
-        [data-testid="stAppViewContainer"] {
-            background-color: #0f3460;
-            color: #f5f5f5 !important;
-        }
-
-        /* Text styling */
-        [data-testid="stMarkdownContainer"], p, label, span, div {
-            color: #f5f5f5 !important;
-        }
-
-        /* Headers */
-        h1, h2, h3, h4, h5 {
-            color: #e94560 !important;
-            text-align: left;
-        }
-
-        /* Buttons */
-        div.stButton > button:first-child {
-            background-color: #ED3500;
-            color: white;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            border: none;
-            transition: all 0.2s ease-in-out;
-        }
-
-        div.stButton > button:first-child:hover {
-            background-color: #ff2e63;
-            transform: scale(1.05);
-        }
-
-        /* Hide footer */
-        footer {visibility: hidden;}
-    </style>
-""", unsafe_allow_html=True)
-
 # Initialize session state for login
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
@@ -180,6 +135,7 @@ def dashboard_page():
 # Add Shipment Page
 def add_shipment_page():
     st.header("📦 Add New Shipment")
+    # If user role is not admin/manager/shipper allow only own shipments — demo logic
     if st.session_state.role == 'user' and st.session_state.username not in ['admin', 'manager']:
         st.warning("Basic users can only add their own shipments.")
 
@@ -196,10 +152,14 @@ def add_shipment_page():
         submitted = st.form_submit_button("Add Shipment")
         if submitted:
             if all([sender_name, receiver_name, origin, destination, items]):
+                # Generate tracking ID
                 tracking_id = str(uuid.uuid4()).hex[:8].upper()
                 created_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+                # Add shipment
                 shipment_id = add_shipment(sender_name, receiver_name, origin, destination, status, tracking_id, created_date, st.session_state.username)
+
+                # Add order
                 add_order(shipment_id, items, int(quantity), float(total_cost))
 
                 st.success(f"Shipment added! Tracking ID: {tracking_id}")
@@ -230,11 +190,9 @@ def track_shipment_page():
                 st.write(f"**Status:** {shipment.iloc[0]['status']}")
                 st.write(f"**Created:** {shipment.iloc[0]['created_date']}")
 
+            # Status update for admin/manager
             if st.session_state.role in ['admin', 'manager']:
-                new_status = st.selectbox("Update Status", ['Pending', 'In Transit', 'Delivered'], 
-                                          index=['Pending', 'In Transit', 'Delivered'].index(shipment.iloc[0]['status']) 
-                                          if shipment.iloc[0]['status'] in ['Pending', 'In Transit', 'Delivered'] else 0, 
-                                          key="update")
+                new_status = st.selectbox("Update Status", ['Pending', 'In Transit', 'Delivered'], index=['Pending', 'In Transit', 'Delivered'].index(shipment.iloc[0]['status']) if shipment.iloc[0]['status'] in ['Pending', 'In Transit', 'Delivered'] else 0, key="update")
                 if st.button("Update Status"):
                     update_shipment_status(tracking_id, new_status)
                     st.success(f"Status updated to {new_status}!")
@@ -247,6 +205,7 @@ def track_shipment_page():
 # View Orders Page
 def view_orders_page():
     st.header("📋 View Orders")
+    # Get joined data (shipments + orders)
     shipments_df = get_shipments()
     orders_df = get_orders()
     if not orders_df.empty and not shipments_df.empty:
@@ -255,15 +214,18 @@ def view_orders_page():
     else:
         merged_df = pd.DataFrame()
 
+    # Filters
     status_filter = st.multiselect("Filter by Status", ['Pending', 'In Transit', 'Delivered'], default=['Pending', 'In Transit', 'Delivered'])
     filtered_df = merged_df[merged_df['status'].isin(status_filter)] if not merged_df.empty else pd.DataFrame()
 
     st.dataframe(filtered_df)
 
+    # Edit for admin/manager
     if st.session_state.role in ['admin', 'manager'] and not filtered_df.empty:
         st.write("Edit entries below (admin/manager only):")
         edited_df = st.data_editor(filtered_df, num_rows="dynamic", use_container_width=True)
         if st.button("Save Changes"):
+            # For demo, just show success (in real app, update DB row-by-row)
             st.success("Changes saved! (Demo mode - updates reflected on refresh)")
             st.experimental_rerun()
     else:
@@ -275,10 +237,13 @@ def profile_page():
     st.header("👤 User Profile")
     st.write(f"Welcome, {st.session_state.username}!")
 
+    # User's shipments
     user_shipments = get_user_shipments(st.session_state.username)
     if not user_shipments.empty:
         st.subheader("Your Shipments")
         st.dataframe(user_shipments[['tracking_id', 'status', 'created_date']])
+
+        # User-specific metrics
         total_user = len(user_shipments)
         pending_user = len(user_shipments[user_shipments['status'] == 'Pending'])
         st.metric("Your Total Shipments", total_user)
