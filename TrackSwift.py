@@ -33,25 +33,35 @@ st.markdown("""
             color: white !important;
         }
 
-        /* Main app background */
+        /* Main page background */
         [data-testid="stAppViewContainer"] {
             background-color: #0f3460;
-            color: #f5f5f5 !important;  /* Set all text to light gray */
+            color: #f5f5f5 !important;
         }
 
-        /* Text color inside widgets, labels, etc. */
+        /* Center main content */
+        [data-testid="stAppViewContainer"] > div:first-child {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Text styling */
         [data-testid="stMarkdownContainer"], p, label, span, div {
             color: #f5f5f5 !important;
         }
 
         /* Headers */
         h1, h2, h3, h4, h5 {
-            color: #ED3500 !important;  /* Accent color for titles */
+            color: #e94560 !important;
+            text-align: center;
         }
 
         /* Buttons */
         div.stButton > button:first-child {
-            background-color: #e94560;
+            background-color: #ED3500;
             color: white;
             border-radius: 8px;
             padding: 0.5rem 1rem;
@@ -73,6 +83,7 @@ st.markdown("""
 
 
 
+
 # Initialize session state for login
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
@@ -88,26 +99,28 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    st.title(" Login to TrackSwift")
-    st.write("Enter your credentials to access the platform. Demo accounts:")
-    st.write("- admin/admin (full access)")
-    st.write("- manager/manager (edit access)")
-    st.write("- customer1/cust1 (basic access)")
-    st.write("- customer2/cust2 (basic access)")
-    st.write("- shipper/ship1 (basic access)")
+    # ✅ Wrap everything in a centered container
+    with st.container():
+        st.markdown("<h1>🚚 Login to TrackSwift</h1>", unsafe_allow_html=True)
+        st.write("Enter your credentials to access the platform. Demo accounts:")
+        st.write("- admin/admin (full access)")
+        st.write("- manager/manager (edit access)")
+        st.write("- customer1/cust1 (basic access)")
+        st.write("- customer2/cust2 (basic access)")
+        st.write("- shipper/ship1 (basic access)")
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
 
 # Main App Layout (after login)
 def main_app():
