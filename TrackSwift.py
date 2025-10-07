@@ -47,7 +47,7 @@ st.markdown("""
         /* Headers */
         h1, h2, h3, h4, h5 {
             color: #e94560 !important;
-            text-align: center;
+            text-align: left;
         }
 
         /* Buttons */
