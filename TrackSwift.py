@@ -25,54 +25,43 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- Custom CSS for modern look ---
-st.markdown(
+st.markdown("""
     <style>
-    /* Global background and text */
-    body {
-        background-color: #f8f9fa;
-        color: #212529;
-    }
-    /* Sidebar */
-    section[data-testid="stSidebar"] {
-        background-color: #1e1e2f;
-        color: white;
-    }
-    section[data-testid="stSidebar"] .css-1d391kg {
-        color: white;
-    }
-    /* Titles and headers */
-    h1, h2, h3 {
-        color: #2c3e50;
-        font-family: 'Segoe UI', sans-serif;
-        font-weight: 600;
-    }
-    /* Buttons */
-    div.stButton > button {
-        background: linear-gradient(90deg, #007bff, #00b4d8);
-        color: white;
-        border-radius: 8px;
-        padding: 0.5em 1.5em;
-        font-weight: 500;
-        border: none;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        transform: translateY(-2px);
-        background: linear-gradient(90deg, #0056b3, #0096c7);
-    }
-    /* Metric cards */
-    [data-testid="stMetricValue"] {
-        color: #007bff;
-        font-weight: 700;
-    }
-    /* DataFrame tables */
-    .dataframe {
-        border: 1px solid #dee2e6;
-        border-radius: 6px;
-    }
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #1a1a2e, #16213e);
+            color: white;
+        }
+
+        .css-18e3th9 {
+            background-color: #0f3460;
+        }
+
+        .stButton>button {
+            background-color: #e94560;
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .stButton>button:hover {
+            background-color: #ff2e63;
+            transform: scale(1.05);
+        }
+
+        h1, h2, h3 {
+            color: #e94560;
+        }
+
+        .css-1v3fvcr {
+            color: #f5f5f5;
+        }
+
+        footer {visibility: hidden;}
     </style>
-, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
+
 
 
 
