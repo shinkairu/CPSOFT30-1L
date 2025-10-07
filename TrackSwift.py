@@ -40,115 +40,99 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # Custom CSS styling
-    st.markdown(
-        """
-        <style>
-        /* Remove default Streamlit padding and white margins */
-        .block-container {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        /* Full-screen blue background */
-        body {
+    # Background color
+    page_bg = """
+    <style>
+        [data-testid="stAppViewContainer"] {
             background-color: #093FB4;
         }
-
-        /* Center container */
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #093FB4;
-            color: white;
+        [data-testid="stHeader"] {
+            background: none;
         }
-
-        /* Inner login box */
-        .login-box {
-            background-color: rgba(255, 255, 255, 0.08);
+        [data-testid="stToolbar"] {
+            right: 2rem;
+        }
+        .login-card {
+            background-color: rgba(255, 255, 255, 0.1);
             padding: 40px 50px;
             border-radius: 20px;
-            text-align: center;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            width: 360px;
+            text-align: center;
+            color: white;
+            max-width: 380px;
+            margin: auto;
         }
-
         .login-title {
             color: #ED3500;
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 700;
             margin-bottom: 10px;
         }
-
         .demo-text {
             font-size: 14px;
             line-height: 1.6;
             margin-bottom: 25px;
         }
-
-        /* Center and style the text boxes */
         .stTextInput>div>div>input {
             text-align: center;
             border-radius: 8px;
         }
-
-        /* Center the login button */
         div[data-testid="stButton"] button {
             background-color: #ED3500 !important;
             color: white !important;
             border: none !important;
-            border-radius: 10px !important;
+            border-radius: 8px !important;
             width: 100% !important;
             font-weight: 600 !important;
             transition: 0.2s;
         }
-
         div[data-testid="stButton"] button:hover {
             background-color: #ff4b1f !important;
             transform: scale(1.02);
         }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    </style>
+    """
+    st.markdown(page_bg, unsafe_allow_html=True)
 
-    # HTML structure
-    st.markdown('<div class="login-wrapper"><div class="login-box">', unsafe_allow_html=True)
-    st.markdown('<div class="login-title">Login to TrackSwift</div>', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="demo-text">
-        Enter your credentials to access the platform.<br><br>
-        Demo accounts:<br><br>
-        admin/admin (full access)<br>
-        manager/manager (edit access)<br>
-        customer1/cust1 (basic access)<br>
-        customer2/cust2 (basic access)<br>
-        shipper/ship1 (basic access)
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Add vertical spacing so it looks centered
+    st.markdown("###")
+    st.markdown("###")
+    st.markdown("###")
 
-    # Inputs (centered)
-    username = st.text_input("Username", placeholder="Username")
-    password = st.text_input("Password", type="password", placeholder="Password")
+    # Login card
+    with st.container():
+        st.markdown('<div class="login-card">', unsafe_allow_html=True)
+        st.markdown('<div class="login-title">Login to TrackSwift</div>', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="demo-text">
+            Enter your credentials to access the platform.<br><br>
+            Demo accounts:<br><br>
+            admin/admin (full access)<br>
+            manager/manager (edit access)<br>
+            customer1/cust1 (basic access)<br>
+            customer2/cust2 (basic access)<br>
+            shipper/ship1 (basic access)
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    # Login button centered
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
+        username = st.text_input("Username", placeholder="Username")
+        password = st.text_input("Password", type="password", placeholder="Password")
 
-    st.markdown('</div></div>', unsafe_allow_html=True)
+        if st.button("Login"):
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # Main App Layout (after login)
