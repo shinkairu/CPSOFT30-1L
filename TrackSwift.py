@@ -85,74 +85,83 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    st.markdown(
-        """
-        <style>
-        /* Center everything on the page */
-        .stApp {
-            background-color: #f7f9fc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
+    # CSS only for the login page: hide sidebar and place a centered overlay
+    st.markdown("""
+    <style>
+    /* Hide sidebar while on login page */
+    [data-testid="stSidebar"] { display: none !important; }
 
-        /* Center container */
-        .login-container {
-            background-color: white;
-            padding: 2.5rem 3rem;
-            border-radius: 20px;
-            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 380px;
-        }
+    /* Remove top padding in the main content column to help centering */
+    .block-container { padding-top: 0rem !important; padding-bottom: 0rem !important; }
 
-        /* Title styling */
-        .login-title {
-            color: #2b6cb0;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-        }
+    /* Absolute center overlay (covers viewport, ignores sidebar) */
+    .login-overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        width: 420px;
+        max-width: 92%;
+    }
 
-        /* Input text color */
-        .stTextInput label, .stTextInput input {
-            color: #2d3748 !important;
-        }
+    /* Card style */
+    .login-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 28px 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        text-align: center;
+    }
 
-        /* Button styling */
-        div.stButton > button {
-            background-color: #2b6cb0;
-            color: white;
-            border-radius: 10px;
-            height: 45px;
-            font-size: 1rem;
-            border: none;
-            width: 100%;
-        }
+    /* Inputs: full width inside the card */
+    div[data-baseweb="input"], .stTextInput > div {
+        width: 100% !important;
+        margin: 6px 0 !important;
+    }
 
-        div.stButton > button:hover {
-            background-color: #1a4f8a;
-            transition: 0.3s;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    /* Make the button full width */
+    div.stButton > button {
+        width: 100% !important;
+        height: 44px;
+        border-radius: 8px;
+        background-color: #2b6cb0;
+        color: white;
+        border: none;
+        font-size: 1rem;
+    }
+    div.stButton > button:hover { background-color: #1a4f8a; }
 
-    # Main login layout
-    st.markdown("<div class='login-container'>", unsafe_allow_html=True)
-    st.markdown("<div class='login-title'>🚀 TrackSwift Login</div>", unsafe_allow_html=True)
+    /* Titles */
+    .login-card h2 { margin: 0 0 6px 0; color: #1f3b73; }
+    .login-card p { margin: 0 0 16px 0; color: #4b5563; }
+    </style>
+    """, unsafe_allow_html=True)
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    # Centered card markup
+    st.markdown('<div class="login-overlay"><div class="login-card">', unsafe_allow_html=True)
 
-    if st.button("Login"):
-        if username == "admin" and password == "1234":
-            st.success("Login successful! Redirecting...")
+    # Title / subtitle
+    st.markdown("<h2>🚚 TrackSwift</h2>", unsafe_allow_html=True)
+    st.markdown("<p>Smart Delivery Management System</p>", unsafe_allow_html=True)
+
+    # Use unique keys to avoid duplicate-element errors
+    username = st.text_input("Username", key="login_username")
+    password = st.text_input("Password", type="password", key="login_password")
+
+    # Login button with key
+    if st.button("Login", key="login_button"):
+        role = authenticate_user(username, password)
+        if role:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = role
+            st.success(f"Welcome, {username}!")
+            st.experimental_rerun()
         else:
-            st.error("Invalid username or password.")
-    st.markdown("</div>", unsafe_allow_html=True)
+            st.error("Invalid credentials. Try again.")
+
+    st.markdown('</div></div>', unsafe_allow_html=True)
 
 # Main App Layout (after login)
 def main_app():
