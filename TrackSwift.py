@@ -40,106 +40,85 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # Background and styling
-    st.markdown(
-        """
-        <style>
-        [data-testid="stAppViewContainer"] {
-            background-color: #093FB4;
-        }
-        [data-testid="stHeader"] {
-            background: none;
-        }
-        [data-testid="stToolbar"] {
-            right: 2rem;
-        }
-        .login-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            color: white;
-        }
-        .login-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 40px 50px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            width: 340px;
-        }
-        .login-title {
-            color: #ED3500;
-            font-size: 30px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .demo-text {
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-        .stTextInput label {
-            display: none !important; /* hides the ghost bubble label */
-        }
-        .stTextInput>div>div>input {
-            text-align: center;
-            border-radius: 8px;
-        }
-        div[data-testid="stButton"] button {
-            background-color: #ED3500 !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            width: 100% !important;
-            font-weight: 600 !important;
-            transition: 0.2s;
-        }
-        div[data-testid="stButton"] button:hover {
-            background-color: #ff4b1f !important;
-            transform: scale(1.02);
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+   import streamlit as st
+import App_utils as app  # your utility file (with init_db, get_user, etc.)
 
-    # Layout
-    st.markdown('<div class="login-wrapper"><div class="login-card">', unsafe_allow_html=True)
-    st.markdown('<div class="login-title">Login to TrackSwift</div>', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="demo-text">
-        Enter your credentials to access the platform.<br><br>
-        Demo accounts:<br><br>
-        admin/admin (full access)<br>
-        manager/manager (edit access)<br>
-        customer1/cust1 (basic access)<br>
-        customer2/cust2 (basic access)<br>
-        shipper/ship1 (basic access)
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+# --- Initialize Database ---
+app.init_db()
 
-    # Text inputs (with placeholders only)
-    username = st.text_input("", placeholder="Username")
-    password = st.text_input("", type="password", placeholder="Password")
+# --- Page Config ---
+st.set_page_config(page_title="TrackSwift | Login", page_icon="🚚", layout="centered")
 
-    # Button and feedback stay together
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
+# --- Custom CSS Styling ---
+st.markdown(
+    """
+    <style>
+    body {
+        background-color: #0047AB;
+    }
+    .login-container {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 40px 50px;
+        border-radius: 20px;
+        width: 400px;
+        margin: auto;
+        margin-top: 10%;
+        text-align: center;
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+    .stTextInput>div>div>input {
+        background-color: white;
+        color: black;
+        border-radius: 10px;
+    }
+    .stButton>button {
+        background-color: #FF4B4B;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 25px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .stButton>button:hover {
+        background-color: #e33a3a;
+    }
+    h2 {
+        color: #FFFFFF;
+        font-family: 'Arial Black', sans-serif;
+        font-size: 28px;
+    }
+    p {
+        color: #e0e0e0;
+        font-size: 14px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-    st.markdown('</div></div>', unsafe_allow_html=True)
+# --- Centered Login Box ---
+st.markdown("<div class='login-container'>", unsafe_allow_html=True)
+
+st.markdown("## 🚛 Login to TrackSwift")
+st.markdown("<p>Enter your credentials to access the platform.</p>", unsafe_allow_html=True)
+
+# --- Input Fields ---
+username = st.text_input("Username")
+password = st.text_input("Password", type="password")
+
+# --- Login Button ---
+if st.button("Login"):
+    user = app.authenticate_user(username, password)
+    if user:
+        st.success(f"Welcome, {username}!")
+        st.session_state["user"] = username
+        st.switch_page("pages/Home.py")  # redirect to main page if using multipage
+    else:
+        st.error("Invalid username or password.")
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 
