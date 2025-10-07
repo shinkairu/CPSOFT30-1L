@@ -40,49 +40,82 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # Set background and title styles
+    # Custom CSS styling
     st.markdown(
         """
         <style>
+        /* Remove default Streamlit padding and white margins */
+        .block-container {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* Full-screen blue background */
         body {
             background-color: #093FB4;
         }
-        .login-container {
+
+        /* Center container */
+        .login-wrapper {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 90vh;
+            align-items: center;
+            height: 100vh;
+            background-color: #093FB4;
             color: white;
-            text-align: center;
         }
+
+        /* Inner login box */
         .login-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.08);
+            padding: 40px 50px;
             border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            width: 350px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            width: 360px;
         }
+
         .login-title {
             color: #ED3500;
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 28px;
+            font-weight: 700;
             margin-bottom: 10px;
         }
+
         .demo-text {
             font-size: 14px;
-            margin-bottom: 20px;
+            line-height: 1.6;
+            margin-bottom: 25px;
         }
+
+        /* Center and style the text boxes */
         .stTextInput>div>div>input {
             text-align: center;
+            border-radius: 8px;
+        }
+
+        /* Center the login button */
+        div[data-testid="stButton"] button {
+            background-color: #ED3500 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 10px !important;
+            width: 100% !important;
+            font-weight: 600 !important;
+            transition: 0.2s;
+        }
+
+        div[data-testid="stButton"] button:hover {
+            background-color: #ff4b1f !important;
+            transform: scale(1.02);
         }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # HTML layout
-    st.markdown('<div class="login-container"><div class="login-box">', unsafe_allow_html=True)
+    # HTML structure
+    st.markdown('<div class="login-wrapper"><div class="login-box">', unsafe_allow_html=True)
     st.markdown('<div class="login-title">Login to TrackSwift</div>', unsafe_allow_html=True)
     st.markdown(
         """
@@ -99,22 +132,21 @@ def login_page():
         unsafe_allow_html=True
     )
 
-    username = st.text_input("Username", key="login_username", label_visibility="collapsed", placeholder="Username")
-    password = st.text_input("Password", type="password", key="login_password", label_visibility="collapsed", placeholder="Password")
+    # Inputs (centered)
+    username = st.text_input("Username", placeholder="Username")
+    password = st.text_input("Password", type="password", placeholder="Password")
 
-    # Add centered login button
-    login_col = st.columns([1, 1, 1])
-    with login_col[1]:
-        if st.button("Login", use_container_width=True):
-            role = authenticate_user(username, password)
-            if role:
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.session_state.role = role
-                st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
-            else:
-                st.error("Invalid credentials. Try again.")
+    # Login button centered
+    if st.button("Login"):
+        role = authenticate_user(username, password)
+        if role:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = role
+            st.success(f"Welcome, {username}!")
+            st.experimental_rerun()
+        else:
+            st.error("Invalid credentials. Try again.")
 
     st.markdown('</div></div>', unsafe_allow_html=True)
 
