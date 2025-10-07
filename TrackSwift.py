@@ -26,38 +26,60 @@ st.set_page_config(
 )
 
 # --- Custom CSS to center front page ---
-# --- Custom CSS to center front page ---
 st.markdown("""
     <style>
-    /* Center the entire main container */
-    .block-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        height: 90vh;
-        padding-top: 0;
-        padding-bottom: 0;
-    }
+        /* Sidebar background */
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #1a1a2e, #16213e);
+            color: white !important;
+        }
 
-    /* Center text inputs and buttons */
-    div[data-baseweb="input"] {
-        margin: 0 auto;
-        width: 300px !important;
-    }
+        /* Main page background */
+        [data-testid="stAppViewContainer"] {
+            background-color: #0f3460;
+            color: #f5f5f5 !important;
+        }
 
-    button[kind="primary"] {
-        margin: 1rem auto;
-        display: block;
-    }
+        /* Center main content */
+        [data-testid="stAppViewContainer"] > div:first-child {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
 
-    /* Center titles and text */
-    h1, h2, h3, p {
-        text-align: center !important;
-    }
+        /* Text styling */
+        [data-testid="stMarkdownContainer"], p, label, span, div {
+            color: #f5f5f5 !important;
+        }
+
+        /* Headers */
+        h1, h2, h3, h4, h5 {
+            color: #e94560 !important;
+            text-align: center;
+        }
+
+        /* Buttons */
+        div.stButton > button:first-child {
+            background-color: #e94560;
+            color: white;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        div.stButton > button:first-child:hover {
+            background-color: #ff2e63;
+            transform: scale(1.05);
+        }
+
+        /* Hide footer */
+        footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
+
 
 
 
