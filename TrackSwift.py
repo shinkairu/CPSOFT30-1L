@@ -86,7 +86,7 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    st.title("🚪 Login to TrackSwift")
+    st.title(" Login to TrackSwift")
     st.write("Enter your credentials to access the platform. Demo accounts:")
     st.write("- admin/admin (full access)")
     st.write("- manager/manager (edit access)")
