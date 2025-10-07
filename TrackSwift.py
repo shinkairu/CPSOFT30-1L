@@ -56,16 +56,6 @@ st.markdown(
     body {
         background-color: #0047AB;
     }
-    .login-container {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 40px 50px;
-        border-radius: 20px;
-        width: 400px;
-        margin: auto;
-        margin-top: 10%;
-        text-align: center;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
-        color: white;
     }
     .stTextInput>div>div>input {
         background-color: white;
