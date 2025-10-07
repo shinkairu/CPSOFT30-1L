@@ -35,7 +35,7 @@ st.markdown("""
 
         /* Main app background */
         [data-testid="stAppViewContainer"] {
-            background-color: #0f3460;
+            background-color: #093FB4;
         }
 
         /* Button styling */
