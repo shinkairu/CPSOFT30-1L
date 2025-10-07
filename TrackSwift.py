@@ -40,77 +40,26 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-   import streamlit as st
-import App_utils as app  # your utility file (with init_db, get_user, etc.)
+    st.title(" Login to TrackSwift")
+    st.write("Enter your credentials to access the platform. Demo accounts:")
+    st.write("- admin/admin (full access)")
+    st.write("- manager/manager (edit access)")
+    st.write("- customer1/cust1 (basic access)")
+    st.write("- customer2/cust2 (basic access)")
+    st.write("- shipper/ship1 (basic access)")
 
-# --- Initialize Database ---
-app.init_db()
-
-# --- Page Config ---
-st.set_page_config(page_title="TrackSwift | Login", page_icon="🚚", layout="centered")
-
-# --- Custom CSS Styling ---
-st.markdown(
-    """
-    <style>
-    body {
-        background-color: #0047AB;
-    }
-    }
-    .stTextInput>div>div>input {
-        background-color: white;
-        color: black;
-        border-radius: 10px;
-    }
-    .stButton>button {
-        background-color: #FF4B4B;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 8px 25px;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-    .stButton>button:hover {
-        background-color: #e33a3a;
-    }
-    h2 {
-        color: #FFFFFF;
-        font-family: 'Arial Black', sans-serif;
-        font-size: 28px;
-    }
-    p {
-        color: #e0e0e0;
-        font-size: 14px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# --- Centered Login Box ---
-st.markdown("<div class='login-container'>", unsafe_allow_html=True)
-
-st.markdown("## 🚛 Login to TrackSwift")
-st.markdown("<p>Enter your credentials to access the platform.</p>", unsafe_allow_html=True)
-
-# --- Input Fields ---
-username = st.text_input("Username")
-password = st.text_input("Password", type="password")
-
-# --- Login Button ---
-if st.button("Login"):
-    user = app.authenticate_user(username, password)
-    if user:
-        st.success(f"Welcome, {username}!")
-        st.session_state["user"] = username
-        st.switch_page("pages/Home.py")  # redirect to main page if using multipage
-    else:
-        st.error("Invalid username or password.")
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        role = authenticate_user(username, password)
+        if role:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = role
+            st.success(f"Welcome, {username}!")
+            st.experimental_rerun()
+        else:
+            st.error("Invalid credentials. Try again.")
 
 # Main App Layout (after login)
 def main_app():
