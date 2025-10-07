@@ -30,15 +30,26 @@ st.markdown("""
         /* Sidebar background */
         [data-testid="stSidebar"] {
             background: linear-gradient(180deg, #1a1a2e, #16213e);
-            color: white;
+            color: white !important;
         }
 
         /* Main app background */
         [data-testid="stAppViewContainer"] {
-            background-color: #093FB4;
+            background-color: #0f3460;
+            color: #f5f5f5 !important;  /* Set all text to light gray */
         }
 
-        /* Button styling */
+        /* Text color inside widgets, labels, etc. */
+        [data-testid="stMarkdownContainer"], p, label, span, div {
+            color: #f5f5f5 !important;
+        }
+
+        /* Headers */
+        h1, h2, h3, h4, h5 {
+            color: #e94560 !important;  /* Accent color for titles */
+        }
+
+        /* Buttons */
         div.stButton > button:first-child {
             background-color: #e94560;
             color: white;
@@ -53,20 +64,11 @@ st.markdown("""
             transform: scale(1.05);
         }
 
-        /* Headers */
-        h1, h2, h3, h4, h5 {
-            color: #e94560;
-        }
-
         /* Hide footer */
         footer {visibility: hidden;}
-
-        /* Optional: center titles */
-        .centered-title {
-            text-align: center;
-        }
     </style>
 """, unsafe_allow_html=True)
+
 
 
 
