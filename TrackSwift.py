@@ -24,8 +24,8 @@ st.set_page_config(
     page_icon="🚚",
     layout="wide"
 )
-
-# --- Custom CSS to center front page ---
+"""
+--- Custom CSS to center front page ---
 st.markdown("""
     <style>
         /* Sidebar background */
@@ -80,6 +80,70 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+"""
+
+# --- Custom CSS to center front page ---
+st.markdown("""
+    <style>
+    /* Center entire page content */
+    .block-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 90vh;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    /* White card container */
+    .login-card {
+        background-color: white;
+        padding: 3rem 4rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        width: 400px;
+        text-align: center;
+    }
+
+    /* Center text inputs */
+    div[data-baseweb="input"] {
+        margin: 0 auto;
+        width: 100% !important;
+    }
+
+    /* Center primary button */
+    button[kind="primary"] {
+        margin: 1rem auto;
+        display: block;
+        width: 100%;
+    }
+
+    /* Fonts and colors */
+    h1, h2, h3, p, label {
+        text-align: center !important;
+        color: #222 !important;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
+# --- Front Page Content ---
+st.markdown('<div class="login-card">', unsafe_allow_html=True)
+
+st.title("🚚 TrackSwift")
+st.subheader("Smart Delivery Management System")
+st.write("Simplify, track, and manage your deliveries efficiently.")
+
+username = st.text_input("Username")
+password = st.text_input("Password", type="password")
+
+if st.button("Login"):
+    st.success(f"Welcome back, {username}!")
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 
