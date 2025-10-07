@@ -39,17 +39,51 @@ if not st.session_state.get('db_initialized', False):
     st.session_state.db_initialized = True
 
 # Login Page
+# Login Page
 def login_page():
-    st.title(" Login to TrackSwift")
-    st.write("Enter your credentials to access the platform. Demo accounts:")
-    st.write("- admin/admin (full access)")
-    st.write("- manager/manager (edit access)")
-    st.write("- customer1/cust1 (basic access)")
-    st.write("- customer2/cust2 (basic access)")
-    st.write("- shipper/ship1 (basic access)")
+    # Add background color using custom HTML/CSS
+    page_bg = """
+    <style>
+    [data-testid="stAppViewContainer"] {
+        background-color: #093FB4;
+    }
+    .title {
+        color: #ED3500;
+        text-align: center;
+        font-size: 36px;
+        font-weight: bold;
+        margin-top: 30px;
+    }
+    .login-box {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        width: 400px;
+        margin: 80px auto;
+        text-align: center;
+    }
+    </style>
+    """
+    st.markdown(page_bg, unsafe_allow_html=True)
+
+    st.markdown('<div class="title">Login to TrackSwift</div>', unsafe_allow_html=True)
+
+    # Create centered login box
+    st.markdown('<div class="login-box">', unsafe_allow_html=True)
+    st.write("Enter your credentials to access the platform.")
+    st.markdown("""
+    **Demo Accounts:**
+    - admin / admin (Full Access)  
+    - manager / manager (Edit Access)  
+    - customer1 / cust1 (Basic Access)  
+    - customer2 / cust2 (Basic Access)  
+    - shipper / ship1 (Basic Access)
+    """)
 
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
+
     if st.button("Login"):
         role = authenticate_user(username, password)
         if role:
@@ -60,6 +94,8 @@ def login_page():
             st.experimental_rerun()
         else:
             st.error("Invalid credentials. Try again.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 # Main App Layout (after login)
 def main_app():
