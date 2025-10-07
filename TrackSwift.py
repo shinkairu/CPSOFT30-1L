@@ -9,7 +9,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import uuid
-
+import App_utils as app
 # Import utilities (fixed names/signatures)
 from App_utils import (
     init_db, add_user, get_user, authenticate_user,
@@ -27,16 +27,19 @@ st.set_page_config(
 
 st.markdown("""
     <style>
+        /* Sidebar background */
         [data-testid="stSidebar"] {
             background: linear-gradient(180deg, #1a1a2e, #16213e);
             color: white;
         }
 
-        .css-18e3th9 {
+        /* Main app background */
+        [data-testid="stAppViewContainer"] {
             background-color: #0f3460;
         }
 
-        .stButton>button {
+        /* Button styling */
+        div.stButton > button:first-child {
             background-color: #e94560;
             color: white;
             border-radius: 8px;
@@ -45,20 +48,23 @@ st.markdown("""
             transition: all 0.2s ease-in-out;
         }
 
-        .stButton>button:hover {
+        div.stButton > button:first-child:hover {
             background-color: #ff2e63;
             transform: scale(1.05);
         }
 
-        h1, h2, h3 {
+        /* Headers */
+        h1, h2, h3, h4, h5 {
             color: #e94560;
         }
 
-        .css-1v3fvcr {
-            color: #f5f5f5;
-        }
-
+        /* Hide footer */
         footer {visibility: hidden;}
+
+        /* Optional: center titles */
+        .centered-title {
+            text-align: center;
+        }
     </style>
 """, unsafe_allow_html=True)
 
