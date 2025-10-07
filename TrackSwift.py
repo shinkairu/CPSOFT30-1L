@@ -85,16 +85,18 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # CSS only for the login page: hide sidebar and place a centered overlay
+    # Only hide sidebar when NOT logged in
+    if "logged_in" not in st.session_state or not st.session_state.logged_in:
+        st.markdown("""
+        <style>
+        [data-testid="stSidebar"] { display: none !important; }
+        </style>
+        """, unsafe_allow_html=True)
+
+    # Centered login styling
     st.markdown("""
     <style>
-    /* Hide sidebar while on login page */
-    [data-testid="stSidebar"] { display: none !important; }
-
-    /* Remove top padding in the main content column to help centering */
-    .block-container { padding-top: 0rem !important; padding-bottom: 0rem !important; }
-
-    /* Absolute center overlay (covers viewport, ignores sidebar) */
+    .block-container { padding: 0 !important; }
     .login-overlay {
         position: fixed;
         top: 50%;
@@ -104,8 +106,6 @@ def login_page():
         width: 420px;
         max-width: 92%;
     }
-
-    /* Card style */
     .login-card {
         background: #ffffff;
         border-radius: 12px;
@@ -113,14 +113,6 @@ def login_page():
         box-shadow: 0 10px 30px rgba(0,0,0,0.12);
         text-align: center;
     }
-
-    /* Inputs: full width inside the card */
-    div[data-baseweb="input"], .stTextInput > div {
-        width: 100% !important;
-        margin: 6px 0 !important;
-    }
-
-    /* Make the button full width */
     div.stButton > button {
         width: 100% !important;
         height: 44px;
@@ -131,25 +123,19 @@ def login_page():
         font-size: 1rem;
     }
     div.stButton > button:hover { background-color: #1a4f8a; }
-
-    /* Titles */
-    .login-card h2 { margin: 0 0 6px 0; color: #1f3b73; }
-    .login-card p { margin: 0 0 16px 0; color: #4b5563; }
+    .login-card h2 { color: #1f3b73; margin-bottom: 6px; }
+    .login-card p { color: #4b5563; margin-bottom: 16px; }
     </style>
     """, unsafe_allow_html=True)
 
-    # Centered card markup
+    # Layout
     st.markdown('<div class="login-overlay"><div class="login-card">', unsafe_allow_html=True)
-
-    # Title / subtitle
     st.markdown("<h2>🚚 TrackSwift</h2>", unsafe_allow_html=True)
     st.markdown("<p>Smart Delivery Management System</p>", unsafe_allow_html=True)
 
-    # Use unique keys to avoid duplicate-element errors
     username = st.text_input("Username", key="login_username")
     password = st.text_input("Password", type="password", key="login_password")
 
-    # Login button with key
     if st.button("Login", key="login_button"):
         role = authenticate_user(username, password)
         if role:
@@ -163,7 +149,6 @@ def login_page():
 
     st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Main App Layout (after login)
 def main_app():
     # Sidebar Navigation
     st.sidebar.title("📋 Navigation")
