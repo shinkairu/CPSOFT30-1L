@@ -25,6 +25,40 @@ st.set_page_config(
     layout="wide"
 )
 
+# --- Custom CSS to center front page ---
+st.markdown("""
+    <style>
+    /* Center the entire main container */
+    .block-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 90vh;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    /* Center text inputs and buttons */
+    div[data-baseweb="input"] {
+        margin: 0 auto;
+        width: 300px !important;
+    }
+
+    button[kind="primary"] {
+        margin: 1rem auto;
+        display: block;
+    }
+
+    /* Center titles and text */
+    h1, h2, h3, p {
+        text-align: center !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
 st.markdown("""
     <style>
         /* Sidebar background */
