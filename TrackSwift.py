@@ -39,125 +39,17 @@ if not st.session_state.get('db_initialized', False):
     st.session_state.db_initialized = True
 
 # Login Page
-# Login Page
 def login_page():
-    # Add background color using custom HTML/CSS
-    page_bg = """
-    <style>
-    [data-testid="stAppViewContainer"] {
-        background-color: #093FB4;
-    }
-    .title {
-        color: #ED3500;
-        text-align: center;
-        font-size: 36px;
-        font-weight: bold;
-        margin-top: 30px;
-    }
-    .login-box {
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        width: 400px;
-        margin: 80px auto;
-        text-align: center;
-    }
-    </style>
-    """
-def login_page():
-    # Custom CSS for full-page background and centered login box
-    st.markdown("""
-    <style>
-    /* Full page blue background */
-    [data-testid="stAppViewContainer"] {
-        background-color: #093FB4;
-    }
+    st.title(" Login to TrackSwift")
+    st.write("Enter your credentials to access the platform. Demo accounts:")
+    st.write("- admin/admin (full access)")
+    st.write("- manager/manager (edit access)")
+    st.write("- customer1/cust1 (basic access)")
+    st.write("- customer2/cust2 (basic access)")
+    st.write("- shipper/ship1 (basic access)")
 
-    /* Remove padding/margin for clean layout */
-    .block-container {
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
-        margin: 0 auto;
-    }
-
-    /* Title style */
-    .title {
-        color: #ED3500;
-        text-align: center;
-        font-size: 40px;
-        font-weight: 800;
-        margin-top: 80px;
-        margin-bottom: 20px;
-        font-family: 'Segoe UI', sans-serif;
-    }
-
-    /* Login card */
-    .login-box {
-        background-color: white;
-        border-radius: 15px;
-        padding: 35px 40px;
-        width: 400px;
-        margin: 0 auto;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        text-align: left;
-    }
-
-    /* Center alignment container */
-    .center-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 85vh;
-    }
-
-    /* Remove extra padding for text_input */
-    div[data-testid="stTextInput"] {
-        margin-bottom: 15px;
-    }
-
-    /* Button center */
-    div.stButton > button {
-        width: 100%;
-        background-color: #ED3500;
-        color: white;
-        font-weight: bold;
-        border: none;
-        border-radius: 8px;
-        height: 40px;
-    }
-
-    div.stButton > button:hover {
-        background-color: #c42e00;
-        color: white;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # Center the entire content
-    st.markdown('<div class="center-container">', unsafe_allow_html=True)
-    st.markdown('<div class="title">Login to TrackSwift</div>', unsafe_allow_html=True)
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-
-    # Demo info neatly formatted
-    st.markdown("""
-    <p><b>Enter your credentials to access the platform.</b></p>
-    <p style="font-size: 14px; color: #333;">
-    Demo Accounts:<br>
-    • admin / admin (Full Access)<br>
-    • manager / manager (Edit Access)<br>
-    • customer1 / cust1 (Basic Access)<br>
-    • customer2 / cust2 (Basic Access)<br>
-    • shipper / ship1 (Basic Access)
-    </p>
-    """, unsafe_allow_html=True)
-
-    # Input fields
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
-
-    # Login button
     if st.button("Login"):
         role = authenticate_user(username, password)
         if role:
@@ -168,10 +60,6 @@ def login_page():
             st.experimental_rerun()
         else:
             st.error("Invalid credentials. Try again.")
-
-    st.markdown('</div></div>', unsafe_allow_html=True)
-
-
 
 # Main App Layout (after login)
 def main_app():
