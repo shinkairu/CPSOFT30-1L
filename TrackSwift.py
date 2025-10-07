@@ -85,26 +85,74 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    st.title(" Login to TrackSwift")
-    st.write("Enter your credentials to access the platform. Demo accounts:")
-    st.write("- admin/admin (full access)")
-    st.write("- manager/manager (edit access)")
-    st.write("- customer1/cust1 (basic access)")
-    st.write("- customer2/cust2 (basic access)")
-    st.write("- shipper/ship1 (basic access)")
+    st.markdown(
+        """
+        <style>
+        /* Center everything on the page */
+        .stApp {
+            background-color: #f7f9fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Center container */
+        .login-container {
+            background-color: white;
+            padding: 2.5rem 3rem;
+            border-radius: 20px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 380px;
+        }
+
+        /* Title styling */
+        .login-title {
+            color: #2b6cb0;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Input text color */
+        .stTextInput label, .stTextInput input {
+            color: #2d3748 !important;
+        }
+
+        /* Button styling */
+        div.stButton > button {
+            background-color: #2b6cb0;
+            color: white;
+            border-radius: 10px;
+            height: 45px;
+            font-size: 1rem;
+            border: none;
+            width: 100%;
+        }
+
+        div.stButton > button:hover {
+            background-color: #1a4f8a;
+            transition: 0.3s;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Main login layout
+    st.markdown("<div class='login-container'>", unsafe_allow_html=True)
+    st.markdown("<div class='login-title'>🚀 TrackSwift Login</div>", unsafe_allow_html=True)
 
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
+
     if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
+        if username == "admin" and password == "1234":
+            st.success("Login successful! Redirecting...")
         else:
-            st.error("Invalid credentials. Try again.")
+            st.error("Invalid username or password.")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # Main App Layout (after login)
 def main_app():
