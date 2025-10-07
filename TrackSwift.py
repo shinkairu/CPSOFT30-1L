@@ -46,7 +46,7 @@ st.markdown("""
 
         /* Headers */
         h1, h2, h3, h4, h5 {
-            color: #e94560 !important;  /* Accent color for titles */
+            color: #ED3500 !important;  /* Accent color for titles */
         }
 
         /* Buttons */
