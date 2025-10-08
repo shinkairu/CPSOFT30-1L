@@ -40,106 +40,26 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- CSS STYLE ---
-    st.markdown(
-        """
-        <style>
-        /* Full-page violet gradient background */
-        .stApp {
-            background: linear-gradient(135deg, #8A2BE2 0%, #7B68EE 50%, #9370DB 100%);
-            background-attachment: fixed;
-        }
-
-        /* Center everything */
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        /* Bubble glass box */
-        .glass-box {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            color: white;
-        }
-
-        .glass-box h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .demo-text {
-            font-size: 13px;
-            color: #E6E6FA;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .stTextInput>div>div>input {
-            background-color: rgba(255,255,255,0.2);
-            color: white;
-            border-radius: 8px;
-        }
-
-        .stButton>button {
-            background-color: #7B68EE;
-            color: white;
-            border-radius: 8px;
-            padding: 8px 16px;
-            border: none;
-            width: 100%;
-        }
-
-        .stButton>button:hover {
-            background-color: #9A79FF;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # --- LAYOUT ---
-    st.markdown('<div class="main-container">', unsafe_allow_html=True)
-    st.markdown('<div class="glass-box">', unsafe_allow_html=True)
-
-    st.markdown("<h1>🚚 TrackSwift</h1>", unsafe_allow_html=True)
-    st.markdown(
-        "<p class='demo-text'><b>Demo accounts:</b><br>"
-        "admin / admin<br>"
-        "manager / manager<br>"
-        "customer1 / cust1<br>"
-        "customer2 / cust2<br>"
-        "shipper / ship1</p>",
-        unsafe_allow_html=True,
-    )
-
-    # Streamlit native input form
-    username = st.text_input("Username", placeholder="Enter your username")
-    password = st.text_input("Password", type="password", placeholder="Enter your password")
-
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
-
-    st.markdown("</div></div>", unsafe_allow_html=True)
-
-
+    st.markdown("<h1 style='text-align: center; color: #4B4BFF;'>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+    
+    # Center form using columns
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.info("Demo accounts:\n- admin/admin\n- manager/manager\n- customer1/cust1\n- customer2/cust2\n- shipper/ship1")
+        
+        username = st.text_input("Username", placeholder="Enter your username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
+        
+        if st.button("Login"):
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
 
 
 
