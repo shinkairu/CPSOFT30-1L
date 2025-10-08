@@ -40,26 +40,27 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    st.title(" Login to TrackSwift")
-    st.write("Enter your credentials to access the platform. Demo accounts:")
-    st.write("- admin/admin (full access)")
-    st.write("- manager/manager (edit access)")
-    st.write("- customer1/cust1 (basic access)")
-    st.write("- customer2/cust2 (basic access)")
-    st.write("- shipper/ship1 (basic access)")
+    st.markdown("<h1 style='text-align: center; color: #4B4BFF;'>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+    
+    # Center form using columns
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.info("Demo accounts:\n- admin/admin\n- manager/manager\n- customer1/cust1\n- customer2/cust2\n- shipper/ship1")
+        
+        username = st.text_input("Username", placeholder="Enter your username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
+        
+        if st.button("Login"):
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
 
 # Main App Layout (after login)
 def main_app():
