@@ -40,41 +40,61 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- Background Gradient + Styling ---
+    # --- Background Gradient ---
     st.markdown("""
         <style>
         .stApp {
             background: linear-gradient(135deg, #7F00FF 0%, #E100FF 100%);
             background-attachment: fixed;
         }
-        div[data-testid="stVerticalBlock"] div:has(div[data-testid="stTextInput"]) {
+
+        /* Centered glass bubble container */
+        .login-card {
             background: rgba(255, 255, 255, 0.15);
-            padding: 2.5rem;
+            padding: 3rem 2.5rem;
             border-radius: 20px;
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            text-align: center;
         }
+
         h1 {
             color: white !important;
             text-align: center;
         }
-        label, p, span, .stTextInput input {
+
+        label, p, span, .stTextInput input, .stButton button {
             color: white !important;
+        }
+
+        .stButton button {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .stButton button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.03);
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # --- Page Layout ---
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    # --- Add spacing to center vertically ---
+    st.markdown("<div style='height: 15vh'></div>", unsafe_allow_html=True)
+
+    # --- Layout: center column only ---
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
-        st.markdown("#### Demo accounts:")
-        st.write("admin/admin, manager/manager, customer1/cust1, customer2/cust2, shipper/ship1")
+        st.markdown('<div class="login-card">', unsafe_allow_html=True)
 
-        # --- Inputs and Button inside natural Streamlit container ---
+        st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+        st.markdown("<p>Demo accounts:</p>", unsafe_allow_html=True)
+        st.write("admin/admin • manager/manager • customer1/cust1 • customer2/cust2 • shipper/ship1")
+
         username = st.text_input("Username", placeholder="Enter your username")
         password = st.text_input("Password", type="password", placeholder="Enter your password")
 
@@ -89,7 +109,7 @@ def login_page():
             else:
                 st.error("Invalid credentials. Try again.")
 
-
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 
