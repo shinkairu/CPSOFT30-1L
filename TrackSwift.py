@@ -64,19 +64,25 @@ def login_page():
 
 # Main App Layout (after login)
 def main_app():
-    # Sidebar Navigation
-    st.sidebar.title("📋 Navigation")
+    # ---------------- Sidebar Navigation ----------------
+    st.sidebar.title("📋 Navigation")  # optional, can use markdown for styling
+    
+    # Step 2: Improved sidebar with separator and info
     page = st.sidebar.selectbox(
         "Choose a section:",
         ["🏠 Dashboard", "📦 Add Shipment", "🔍 Track Shipment", "📋 View Orders", "👤 User Profile"]
     )
 
-    # Logout button in sidebar
+    st.sidebar.markdown("---")  # Separator line
+
+    # Role info and logout button
+    st.sidebar.markdown(f"**Logged in as:** {st.session_state.username} ({st.session_state.role})")
     if st.sidebar.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.session_state.username = None
         st.session_state.role = None
         st.experimental_rerun()
+
 
     # Role-based access info
     st.sidebar.info(f"Logged in as: {st.session_state.username} ({st.session_state.role})")
