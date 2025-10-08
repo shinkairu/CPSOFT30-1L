@@ -104,6 +104,12 @@ def login_page():
             font-weight: 600;
         }
         .stButton>button:hover { background-color: #9A79FF; transform: translateY(-1px); }
+        /* Hide the default sidebar (which appears as a ghost bubble) */
+        [data-testid="stSidebar"], .css-1d391kg, .css-ng1t4o {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
         </style>
         """,
         unsafe_allow_html=True,
