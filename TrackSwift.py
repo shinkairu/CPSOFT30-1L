@@ -59,8 +59,8 @@ def login_page():
 
         /* Title styling */
         .login-title {
-            color: #005B41;
-            font-size: 2rem;
+            color: #008170;
+            font-size: 6rem;
             font-weight: 700;
             text-align: center;
             margin-bottom: 1.5rem;
