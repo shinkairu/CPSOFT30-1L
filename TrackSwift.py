@@ -40,31 +40,23 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    """
-    Minimal, robust centered login UI:
-    - Gradient background via .stApp
-    - Vertical/horizontal centering via .block-container
-    - Glass-like panel rendered with simple CSS + a single markdown wrapper
-    - All inputs inside a Streamlit form (keeps rendering stable)
-    """
-
-    # 1) page background + simple card CSS
+    # ---- Modern Gradient Background + Glass Box ----
     st.markdown(
         """
         <style>
-        /* Background */
+        /* Background gradient */
         .stApp {
             background: linear-gradient(135deg, #8A2BE2 0%, #7B68EE 50%, #9370DB 100%) !important;
             background-attachment: fixed;
         }
-    
-        /* Hide the default sidebar (which appears as a ghost bubble) */
+
+        /* Hide default sidebar (removes empty bubble) */
         [data-testid="stSidebar"], .css-1d391kg, .css-ng1t4o {
             display: none !important;
             visibility: hidden !important;
         }
-    
-        /* Center the main content area */
+
+        /* Center content */
         .block-container {
             min-height: 100vh;
             display: flex;
@@ -74,76 +66,92 @@ def login_page():
             padding-bottom: 0;
         }
 
-
-        /* Glass-like panel (kept simple to avoid layout issues) */
-        .simple-glass {
+        /* Glass-style login card */
+        .login-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px 60px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            text-align: center;
             width: 100%;
             max-width: 420px;
-            background: rgba(255,255,255,0.10);
-            border-radius: 14px;
-            padding: 28px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-            -webkit-backdrop-filter: blur(8px);
-            backdrop-filter: blur(8px);
-            color: white;
         }
 
-        /* Input and button visuals (non-invasive selectors) */
+        /* Title style */
+        .login-title {
+            color: white;
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Demo info text */
+        .demo-text {
+            color: #E6E6FA;
+            font-size: 14px;
+            text-align: left;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Input and button styling */
         .stTextInput>div>div>input {
-            background-color: rgba(255,255,255,0.14);
+            background-color: rgba(255,255,255,0.25);
             color: white;
-            border-radius: 8px;
-            padding: 8px;
-        }
-        .stButton>button {
-            background-color: #7B68EE;
-            color: white;
-            border-radius: 8px;
-            width: 100%;
-            padding: 8px 12px;
-            font-weight: 600;
-        }
-        .stButton>button:hover { background-color: #9A79FF; transform: translateY(-1px); }
-        /* Hide the default sidebar (which appears as a ghost bubble) */
-        [data-testid="stSidebar"], .css-1d391kg, .css-ng1t4o {
-            display: none !important;
-            visibility: hidden !important;
         }
 
+        .stButton>button {
+            background-color: #6A5ACD;
+            color: white;
+            border-radius: 10px;
+            padding: 8px 0;
+            width: 100%;
+        }
+
+        .stButton>button:hover {
+            background-color: #7B68EE;
+            color: #f0f0f0;
+        }
         </style>
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
-    # 2) render a single markdown wrapper for the glass panel
-    # NOTE: we only render ONE opening div and one closing div around the form
-    st.markdown('<div class="simple-glass">', unsafe_allow_html=True)
+    # ---- Login Form UI ----
+    st.markdown("<div class='login-card'>", unsafe_allow_html=True)
+    st.markdown("<div class='login-title'>🚚 TrackSwift Login</div>", unsafe_allow_html=True)
 
-    # Title + demo accounts (kept simple)
-    st.markdown("<h2 style='text-align:center; margin:0 0 8px 0;'>🚚 TrackSwift</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#E6E6FA; font-size:13px; margin-bottom:12px; text-align:left;'><b>Demo accounts:</b><br>admin / admin<br>manager / manager<br>customer1 / cust1<br>customer2 / cust2<br>shipper / ship1</p>", unsafe_allow_html=True)
+    # Demo account info
+    st.markdown("""
+    <p class='demo-text'>
+    <b>Demo accounts:</b><br>
+    - admin / admin<br>
+    - manager / manager<br>
+    - customer1 / cust1<br>
+    - customer2 / cust2<br>
+    - shipper / ship1
+    </p>
+    """, unsafe_allow_html=True)
 
-    # 3) Put inputs & button inside a Streamlit form (keeps Streamlit rendering stable)
-    with st.form("login_form"):
-        username = st.text_input("Username", placeholder="Enter your username", key="login_username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
-        submitted = st.form_submit_button("Login")
+    # Form inputs
+    username = st.text_input("Username", placeholder="Enter your username")
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
 
-        if submitted:
-            # keep your auth logic intact
-            role = authenticate_user(username, password)
-            if role:
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.session_state.role = role
-                st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
-            else:
-                st.error("Invalid credentials. Try again.")
+    # Login button
+    if st.button("Login"):
+        role = authenticate_user(username, password)
+        if role:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = role
+            st.success(f"Welcome, {username}!")
+            st.experimental_rerun()
+        else:
+            st.error("Invalid credentials. Try again.")
 
-    # close the glass panel wrapper
-    st.markdown('</div>', unsafe_allow_html=True)
-
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 # Main App Layout (after login)
