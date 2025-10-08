@@ -96,7 +96,7 @@ def login_page():
             font-weight: 600 !important;
             border-radius: 10px !important;
             padding: 0.6rem 0 !important;
-            width: 120%;
+            width: 150%;
             border: none !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
