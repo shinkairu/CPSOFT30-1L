@@ -56,19 +56,6 @@ def login_page():
             justify-content: center;
         }
 
-        /* Glass bubble container */
-        .login-bubble {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 3rem 3rem 2.5rem 3rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-        }
 
         /* Title styling */
         .login-title {
