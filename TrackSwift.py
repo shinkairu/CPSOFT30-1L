@@ -46,7 +46,7 @@ def login_page():
         <style>
         /* Solid background */
         .stApp {
-            background: #0F0F0F !important; 
+            background: #000000 !important; 
             background-attachment: fixed;
         }
 
@@ -75,9 +75,9 @@ def login_page():
 
         /* Title styling (center + #005B41 color) */
         form[data-testid="stForm"] h1 {
-            color: #00BD00!important;
-            text-align: right !important;
-            font-size: 1.8rem !important;
+            color: #005B41 !important;
+            text-align: center !important;
+            font-size: 2rem !important;
             margin-bottom: 1.2rem;
             font-weight: 700;
         }
@@ -107,7 +107,7 @@ def login_page():
         /* Button style */
         form[data-testid="stForm"] button {
             background: #005B41 !important;
-            color: #008170 !important;
+            color: #ffffff !important;
             font-weight: 600 !important;
             border: none !important;
             border-radius: 10px !important;
@@ -135,7 +135,7 @@ def login_page():
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         with st.form("login_form"):
-            st.markdown("<h1> TrackSwift Login</h2>", unsafe_allow_html=True)
+            st.markdown("<h1>TrackSwift Login</h1>", unsafe_allow_html=True)
 
             st.markdown(
                 """
@@ -166,6 +166,7 @@ def login_page():
                     st.experimental_rerun()
                 else:
                     st.error("Invalid credentials. Try again.")
+
 def main_app():
     # ---------------- Sidebar Navigation ----------------
     st.sidebar.title("📋 Navigation")
