@@ -85,7 +85,7 @@ def login_page():
         /* Demo accounts box */
         .demo-text {
             color: #ffffff;
-            text-align: left;
+            text-align: right;
             margin-bottom: 1.2rem;
             font-size: 14px;
             background: rgba(255,255,255,0.08);
