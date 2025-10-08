@@ -74,8 +74,8 @@ def login_page():
         }
 
         /* Title styling (center + #005B41 color) */
-        form[data-testid="stForm"] h2 {
-            color: #25B847!important;
+        form[data-testid="stForm"] h1 {
+            color: #00BD00!important;
             text-align: center !important;
             font-size: 1.8rem !important;
             margin-bottom: 1.2rem;
@@ -135,7 +135,7 @@ def login_page():
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         with st.form("login_form"):
-            st.markdown("<h2> TrackSwift Login</h2>", unsafe_allow_html=True)
+            st.markdown("<h1> TrackSwift Login</h2>", unsafe_allow_html=True)
 
             st.markdown(
                 """
