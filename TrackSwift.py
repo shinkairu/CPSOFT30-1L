@@ -40,106 +40,105 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # Safe, robust CSS that centers the card using .block-container
+    # --- CSS STYLE ---
     st.markdown(
         """
         <style>
-        :root { --card-bg: rgba(255,255,255,0.12); }
-
-        /* Make the main Streamlit content area a flex container and center children */
-        .block-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding-top: 0;
-            padding-bottom: 0;
+        /* Full-page violet gradient background */
+        .stApp {
             background: linear-gradient(135deg, #8A2BE2 0%, #7B68EE 50%, #9370DB 100%);
             background-attachment: fixed;
         }
 
-        /* The glass/login card */
-        .login-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 28px;
+        /* Center everything */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Bubble glass box */
+        .glass-box {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            padding: 40px;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-            color: #ffffff;
+            max-width: 400px;
+            text-align: center;
+            color: white;
         }
 
-        /* Make title sit nicely */
-        .login-card h2 {
-            margin: 0 0 10px 0;
-            color: #fff;
+        .glass-box h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
         }
 
-        /* Styled demo text */
-        .demo-text { color: #E6E6FA; font-size: 14px; text-align: left; margin-bottom: 12px; }
+        .demo-text {
+            font-size: 13px;
+            color: #E6E6FA;
+            margin-bottom: 20px;
+            text-align: left;
+        }
 
-        /* Inputs and button style (keeps Streamlit structure intact) */
         .stTextInput>div>div>input {
-            background-color: rgba(255,255,255,0.14);
+            background-color: rgba(255,255,255,0.2);
             color: white;
             border-radius: 8px;
-            padding: 10px;
         }
-        .stTextInput>div>div>input::placeholder { color: #e0d7ff; }
 
         .stButton>button {
             background-color: #7B68EE;
             color: white;
             border-radius: 8px;
-            padding: 8px 12px;
+            padding: 8px 16px;
             border: none;
-            font-weight: 600;
             width: 100%;
         }
-        .stButton>button:hover { background-color: #9A79FF; transform: translateY(-1px); }
 
-        /* Keep error/success messages visible on card */
-        .stAlert { color: white; }
+        .stButton>button:hover {
+            background-color: #9A79FF;
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    # Render the card HTML wrapper and use a Streamlit form inside it
-    st.markdown('<div class="login-card">', unsafe_allow_html=True)
+    # --- LAYOUT ---
+    st.markdown('<div class="main-container">', unsafe_allow_html=True)
+    st.markdown('<div class="glass-box">', unsafe_allow_html=True)
 
-    st.markdown("<h2 style='text-align:center;'>🚚 TrackSwift Login</h2>", unsafe_allow_html=True)
-
+    st.markdown("<h1>🚚 TrackSwift</h1>", unsafe_allow_html=True)
     st.markdown(
-        "<div class='demo-text'><b>Demo accounts:</b><br>"
-        "- admin / admin<br>"
-        "- manager / manager<br>"
-        "- customer1 / cust1<br>"
-        "- customer2 / cust2<br>"
-        "- shipper / ship1</div>",
+        "<p class='demo-text'><b>Demo accounts:</b><br>"
+        "admin / admin<br>"
+        "manager / manager<br>"
+        "customer1 / cust1<br>"
+        "customer2 / cust2<br>"
+        "shipper / ship1</p>",
         unsafe_allow_html=True,
     )
 
-    # Use st.form so button and inputs are grouped (prevents layout oddities)
-    with st.form("login_form"):
-        username = st.text_input("Username", placeholder="Enter your username", key="login_username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
-        submitted = st.form_submit_button("Login")
+    # Streamlit native input form
+    username = st.text_input("Username", placeholder="Enter your username")
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
 
-        if submitted:
-            role = authenticate_user(username, password)
-            if role:
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.session_state.role = role
-                st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
-            else:
-                st.error("Invalid credentials. Try again.")
+    if st.button("Login"):
+        role = authenticate_user(username, password)
+        if role:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = role
+            st.success(f"Welcome, {username}!")
+            st.rerun()
+        else:
+            st.error("Invalid credentials. Try again.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
 
 
 
