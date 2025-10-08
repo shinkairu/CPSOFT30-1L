@@ -40,17 +40,17 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- CSS Styling ---
+    # --- CSS: solid black background + glass bubble + centered title ---
     st.markdown(
         """
         <style>
-        /* Solid black background */
+        /* Solid background */
         .stApp {
-            background-color: #000000 !important;
+            background: #000000 !important;
             background-attachment: fixed;
         }
 
-        /* Center bubble vertically and horizontally */
+        /* Center bubble vertically */
         .block-container {
             min-height: 100vh;
             display: flex;
@@ -60,8 +60,8 @@ def login_page():
             padding-bottom: 0;
         }
 
-        /* Glass bubble container */
-        .glass-box {
+        /* Glass bubble form */
+        form[data-testid="stForm"] {
             background: rgba(255, 255, 255, 0.12);
             padding: 2.8rem;
             border-radius: 18px;
@@ -71,16 +71,15 @@ def login_page():
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            text-align: center;
         }
 
-        /* Title centered + color #005B41 */
-        .glass-box h1 {
+        /* Title styling (center + #005B41 color) */
+        form[data-testid="stForm"] h2 {
             color: #005B41 !important;
-            font-size: 1.9rem !important;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
             text-align: center !important;
+            font-size: 1.8rem !important;
+            margin-bottom: 1.2rem;
+            font-weight: 700;
         }
 
         /* Demo accounts box */
@@ -95,35 +94,36 @@ def login_page():
         }
 
         /* Input fields */
-        .stTextInput>div>div>input {
+        form[data-testid="stForm"] .stTextInput>div>div>input {
             background: rgba(255, 255, 255, 0.2) !important;
             color: #ffffff !important;
-            border-radius: 10px !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        label {
+        form[data-testid="stForm"] label {
             color: #ffffff !important;
         }
 
         /* Button style */
-        button[kind="primary"] {
+        form[data-testid="stForm"] button {
             background: #005B41 !important;
             color: #ffffff !important;
             font-weight: 600 !important;
+            border: none !important;
             border-radius: 10px !important;
             padding: 0.6rem 0 !important;
             width: 100% !important;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
         }
-        button[kind="primary"]:hover {
+        form[data-testid="stForm"] button:hover {
             background: #00785a !important;
             transform: scale(1.02);
             box-shadow: 0 0 12px rgba(0,91,65,0.6);
         }
 
-        /* Text color fixes */
-        p, span, div, label {
+        /* General text fix */
+        div[data-testid="stMarkdownContainer"] p, span {
             color: #ffffff !important;
         }
         </style>
@@ -131,95 +131,42 @@ def login_page():
         unsafe_allow_html=True,
     )
 
-    # --- Centered bubble content ---
-    st.markdown("<div class='glass-box'>", unsafe_allow_html=True)
+    # --- Centered login form ---
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        with st.form("login_form"):
+            st.markdown("<h2>🚚 TrackSwift Login</h2>", unsafe_allow_html=True)
 
-    st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+            st.markdown(
+                """
+                <div class='demo-text'>
+                <b>Demo accounts:</b><br>
+                - admin / admin<br>
+                - manager / manager<br>
+                - customer1 / cust1<br>
+                - customer2 / cust2<br>
+                - shipper / ship1
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-    st.markdown(
-        """
-        <div class='demo-text'>
-        <b>Demo accounts:</b><br>
-        - admin / admin<br>
-        - manager / manager<br>
-        - customer1 / cust1<br>
-        - customer2 / cust2<br>
-        - shipper / ship1
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+            username = st.text_input("Username", placeholder="Enter your username", key="login_username")
+            password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
 
-    username = st.text_input("Username", placeholder="Enter your username", key="login_username")
-    password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
+            submitted = st.form_submit_button("Login")
 
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
+            if submitted:
+                role = authenticate_user(username, password)
+                if role:
+                    st.session_state.logged_in = True
+                    st.session_state.username = username
+                    st.session_state.role = role
+                    st.success(f"Welcome, {username}!")
+                    st.experimental_rerun()
+                else:
+                    st.error("Invalid credentials. Try again.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# Main App Layout (after login)
-def main_app():
-    # ---------------- Sidebar Navigation ----------------
-    st.sidebar.title("📋 Navigation")
-
-    # Improved sidebar
-    page = st.sidebar.selectbox(
-        "Choose a section:",
-        ["🏠 Dashboard", "📦 Add Shipment", "🔍 Track Shipment", "📋 View Orders", "👤 User Profile"]
-    )
-
-    st.sidebar.markdown("---")  # Divider line
-
-    # Logged-in user info and logout button
-    if "username" in st.session_state and "role" in st.session_state:
-        st.sidebar.markdown(f"**Logged in as:** {st.session_state.username} ({st.session_state.role})")
-
-    if st.sidebar.button("🚪 Logout"):
-        st.session_state.logged_in = False
-        st.session_state.username = None
-        st.session_state.role = None
-        st.experimental_rerun()
-
-    # ---------------- Main Page Display ----------------
-    # Step 3: Page layout using containers and spacing
-    if page == "🏠 Dashboard":
-        with st.container():
-            st.title("📊 Dashboard Overview")
-            st.write("")  # Adds spacing
-            app.dashboard_page()
-
-    elif page == "📦 Add Shipment":
-        with st.container():
-            st.title("➕ Add New Shipment")
-            st.write("")
-            app.add_shipment_page()
-
-    elif page == "🔍 Track Shipment":
-        with st.container():
-            st.title("🔍 Track Shipment")
-            st.write("")
-            app.track_shipment_page()
-
-    elif page == "📋 View Orders":
-        with st.container():
-            st.title("📋 View Orders")
-            st.write("")
-            app.view_orders_page()
-
-    elif page == "👤 User Profile":
-        with st.container():
-            st.title("👤 User Profile")
-            st.write("")
-            app.profile_page()
 
 
 # Dashboard Page
