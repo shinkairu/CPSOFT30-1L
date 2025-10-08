@@ -40,13 +40,11 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- CSS: solid black background + glass bubble + centered title ---
-    st.markdown(
-        """
+    st.markdown("""
         <style>
-        /* Solid background */
+        /* Solid black background */
         .stApp {
-            background: #000000 !important; 
+            background-color: #000000 !important;
             background-attachment: fixed;
         }
 
@@ -56,116 +54,113 @@ def login_page():
             display: flex;
             align-items: center;
             justify-content: center;
-            padding-top: 0;
-            padding-bottom: 0;
         }
 
-        /* Glass bubble form */
-        form[data-testid="stForm"] {
+        /* Glass bubble container */
+        .login-bubble {
             background: rgba(255, 255, 255, 0.12);
-            padding: 2.8rem;
-            border-radius: 18px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 3rem 3rem 2.5rem 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            text-align: center;
         }
 
-        /* Title styling (center + #005B41 color) */
-        form[data-testid="stForm"] h1 {
-            color: #005B41 !important;
-            text-align: center !important;
-            font-size: 2rem !important;
-            margin-bottom: 1.2rem;
+        /* Title styling */
+        .login-title {
+            color: #005B41;
+            font-size: 2rem;
             font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
         }
 
-        /* Demo accounts box */
+        /* Demo account box */
         .demo-text {
             color: #ffffff;
-            text-align: left;
-            margin-bottom: 1.2rem;
             font-size: 14px;
-            background: rgba(255,255,255,0.08);
-            padding: 8px 10px;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            text-align: left;
         }
 
         /* Input fields */
-        form[data-testid="stForm"] .stTextInput>div>div>input {
+        .stTextInput>div>div>input {
             background: rgba(255, 255, 255, 0.2) !important;
             color: #ffffff !important;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        form[data-testid="stForm"] label {
+
+        label {
             color: #ffffff !important;
         }
 
-        /* Button style */
-        form[data-testid="stForm"] button {
-            background: #005B41 !important;
+        /* Button styling */
+        div.stButton > button {
+            background-color: #005B41 !important;
             color: #ffffff !important;
             font-weight: 600 !important;
-            border: none !important;
             border-radius: 10px !important;
             padding: 0.6rem 0 !important;
-            width: 100% !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 100%;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
         }
-        form[data-testid="stForm"] button:hover {
-            background: #008170 !important;
+        div.stButton > button:hover {
+            background-color: #008170 !important;
             transform: scale(1.02);
             box-shadow: 0 0 12px rgba(0,91,65,0.6);
         }
 
-        /* General text fix */
-        div[data-testid="stMarkdownContainer"] p, span {
+        /* Text color fix */
+        p, span {
             color: #ffffff !important;
         }
         </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
-    # --- Centered login form ---
+    # --- Centered content inside the glass bubble ---
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        with st.form("login_form"):
-            st.markdown("<h1>TrackSwift Login</h1>", unsafe_allow_html=True)
+        st.markdown("<div class='login-bubble'>", unsafe_allow_html=True)
 
-            st.markdown(
-                """
-                <div class='demo-text'>
-                <b>Demo accounts:</b><br>
-                - admin / admin<br>
-                - manager / manager<br>
-                - customer1 / cust1<br>
-                - customer2 / cust2<br>
-                - shipper / ship1
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+        st.markdown("<div class='login-title'>🚚 TrackSwift Login</div>", unsafe_allow_html=True)
 
-            username = st.text_input("Username", placeholder="Enter your username", key="login_username")
-            password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
+        st.markdown("""
+            <div class='demo-text'>
+            <b>Demo accounts:</b><br>
+            - admin / admin<br>
+            - manager / manager<br>
+            - customer1 / cust1<br>
+            - customer2 / cust2<br>
+            - shipper / ship1
+            </div>
+        """, unsafe_allow_html=True)
 
-            submitted = st.form_submit_button("Login")
+        username = st.text_input("Username", placeholder="Enter your username", key="login_username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
 
-            if submitted:
-                role = authenticate_user(username, password)
-                if role:
-                    st.session_state.logged_in = True
-                    st.session_state.username = username
-                    st.session_state.role = role
-                    st.success(f"Welcome, {username}!")
-                    st.experimental_rerun()
-                else:
-                    st.error("Invalid credentials. Try again.")
+        if st.button("Login"):
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
 
 def main_app():
     # ---------------- Sidebar Navigation ----------------
