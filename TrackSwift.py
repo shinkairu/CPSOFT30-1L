@@ -88,19 +88,35 @@ def main_app():
     st.sidebar.info(f"Logged in as: {st.session_state.username} ({st.session_state.role})")
 
     if page == "🏠 Dashboard":
-        dashboard_page()
-
+        with st.container():
+            st.title("📊 Dashboard Overview")
+            st.write("")  # Adds spacing
+            app.dashboard_page()
+    
     elif page == "📦 Add Shipment":
-        add_shipment_page()
-
+        with st.container():
+            st.title("➕ Add New Shipment")
+            st.write("")  # Adds spacing
+            app.add_shipment_page()
+    
     elif page == "🔍 Track Shipment":
-        track_shipment_page()
-
+        with st.container():
+            st.title("📦 Track Shipment")
+            st.write("")
+            app.track_shipment_page()
+    
     elif page == "📋 View Orders":
-        view_orders_page()
-
+        with st.container():
+            st.title("📑 View Orders")
+            st.write("")
+            app.view_orders_page()
+    
     elif page == "👤 User Profile":
-        profile_page()
+        with st.container():
+            st.title("👤 User Profile")
+            st.write("")
+            app.profile_page()
+
 
 # Dashboard Page
 def dashboard_page():
