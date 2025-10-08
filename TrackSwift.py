@@ -40,75 +40,55 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- Styles ---
+    # --- Background Gradient + Styling ---
     st.markdown("""
         <style>
         .stApp {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #7F00FF 0%, #E100FF 100%);
             background-attachment: fixed;
         }
-        .login-card {
+        div[data-testid="stVerticalBlock"] div:has(div[data-testid="stTextInput"]) {
             background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
             padding: 2.5rem;
+            border-radius: 20px;
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            color: white;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
         }
-        .login-title {
+        h1 {
+            color: white !important;
             text-align: center;
-            font-size: 2rem;
-            color: white;
-            margin-bottom: 1rem;
         }
-        hr {
-            border: 1px solid rgba(255,255,255,0.3);
-            margin-bottom: 1.5rem;
+        label, p, span, .stTextInput input {
+            color: white !important;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # --- Layout (center the bubble) ---
-    st.markdown("<br><br><br>", unsafe_allow_html=True)  # top spacing
+    # --- Page Layout ---
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
 
     with col2:
-        # Glass-like card container
-        with st.container():
-            st.markdown('<div class="login-card">', unsafe_allow_html=True)
+        st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+        st.markdown("#### Demo accounts:")
+        st.write("admin/admin, manager/manager, customer1/cust1, customer2/cust2, shipper/ship1")
 
-            # Title inside bubble
-            st.markdown('<div class="login-title">🚚 TrackSwift Login</div>', unsafe_allow_html=True)
-            st.markdown("<hr>", unsafe_allow_html=True)
+        # --- Inputs and Button inside natural Streamlit container ---
+        username = st.text_input("Username", placeholder="Enter your username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
 
-            # Demo accounts info
-            st.markdown(
-                "**Demo accounts:**  \n"
-                "- admin/admin  \n"
-                "- manager/manager  \n"
-                "- customer1/cust1  \n"
-                "- customer2/cust2  \n"
-                "- shipper/ship1"
-            )
+        if st.button("Login"):
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
 
-            # Input fields
-            username = st.text_input("Username", placeholder="Enter your username")
-            password = st.text_input("Password", type="password", placeholder="Enter your password")
-
-            # Login button logic
-            if st.button("Login"):
-                role = authenticate_user(username, password)
-                if role:
-                    st.session_state.logged_in = True
-                    st.session_state.username = username
-                    st.session_state.role = role
-                    st.success(f"Welcome, {username}!")
-                    st.experimental_rerun()
-                else:
-                    st.error("Invalid credentials. Try again.")
-
-            st.markdown('</div>', unsafe_allow_html=True)
 
 
 
