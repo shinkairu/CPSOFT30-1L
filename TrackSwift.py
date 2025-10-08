@@ -74,7 +74,7 @@ def login_page():
         }
 
         /* Title styling (center + #005B41 color) */
-        form[data-testid="stForm"] h1 {
+        form[data-testid="stForm"] h2 {
             color: #25B847!important;
             text-align: center !important;
             font-size: 1.8rem !important;
