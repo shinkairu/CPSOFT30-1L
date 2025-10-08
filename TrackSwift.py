@@ -40,117 +40,27 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # ---- Modern Gradient Background + Glass Box ----
-    st.markdown(
-        """
-        <style>
-        /* Background gradient */
-        .stApp {
-            background: linear-gradient(135deg, #8A2BE2 0%, #7B68EE 50%, #9370DB 100%) !important;
-            background-attachment: fixed;
-        }
+    st.markdown("<h1 style='text-align: center; color: #4B4BFF;'>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+    
+    # Center form using columns
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.info("Demo accounts:\n- admin/admin\n- manager/manager\n- customer1/cust1\n- customer2/cust2\n- shipper/ship1")
+        
+        username = st.text_input("Username", placeholder="Enter your username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
+        
+        if st.button("Login"):
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
 
-        /* Hide default sidebar (removes empty bubble) */
-        [data-testid="stSidebar"], .css-1d391kg, .css-ng1t4o {
-            display: none !important;
-            visibility: hidden !important;
-        }
-
-        /* Center content */
-        .block-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-
-        /* Glass-style login card */
-        .login-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 40px 60px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            text-align: center;
-            width: 100%;
-            max-width: 420px;
-        }
-
-        /* Title style */
-        .login-title {
-            color: white;
-            font-size: 2.2em;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        /* Demo info text */
-        .demo-text {
-            color: #E6E6FA;
-            font-size: 14px;
-            text-align: left;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        /* Input and button styling */
-        .stTextInput>div>div>input {
-            background-color: rgba(255,255,255,0.25);
-            color: white;
-        }
-
-        .stButton>button {
-            background-color: #6A5ACD;
-            color: white;
-            border-radius: 10px;
-            padding: 8px 0;
-            width: 100%;
-        }
-
-        .stButton>button:hover {
-            background-color: #7B68EE;
-            color: #f0f0f0;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # ---- Login Form UI ----
-    st.markdown("<div class='login-card'>🚚 TrackSwift Login</div> ", unsafe_allow_html=True)
-
-    # Demo account info
-    st.markdown("""
-    <p class='demo-text'>
-    <b>Demo accounts:</b><br>
-    - admin / admin<br>
-    - manager / manager<br>
-    - customer1 / cust1<br>
-    - customer2 / cust2<br>
-    - shipper / ship1
-    </p>
-    """, unsafe_allow_html=True)
-
-    # Form inputs
-    username = st.text_input("Username", placeholder="Enter your username")
-    password = st.text_input("Password", type="password", placeholder="Enter your password")
-
-    # Login button
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
 # Main App Layout (after login)
