@@ -166,6 +166,57 @@ def login_page():
                     st.experimental_rerun()
                 else:
                     st.error("Invalid credentials. Try again.")
+def main_app():
+    # ---------------- Sidebar Navigation ----------------
+    st.sidebar.title("📋 Navigation")
+
+    page = st.sidebar.selectbox(
+        "Choose a section:",
+        ["🏠 Dashboard", "📦 Add Shipment", "🔍 Track Shipment", "📋 View Orders", "👤 User Profile"]
+    )
+
+    st.sidebar.markdown("---")  # Divider line
+
+    if "username" in st.session_state and "role" in st.session_state:
+        st.sidebar.markdown(f"**Logged in as:** {st.session_state.username} ({st.session_state.role})")
+
+    if st.sidebar.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.session_state.username = None
+        st.session_state.role = None
+        st.experimental_rerun()
+
+    # ---------------- Main Page Display ----------------
+    # Use the local page functions (not app.<function>) — they are defined in this file
+    if page == "🏠 Dashboard":
+        with st.container():
+            st.title("📊 Dashboard Overview")
+            st.write("")  # Adds spacing
+            dashboard_page()
+
+    elif page == "📦 Add Shipment":
+        with st.container():
+            st.title("➕ Add New Shipment")
+            st.write("")
+            add_shipment_page()
+
+    elif page == "🔍 Track Shipment":
+        with st.container():
+            st.title("🔍 Track Shipment")
+            st.write("")
+            track_shipment_page()
+
+    elif page == "📋 View Orders":
+        with st.container():
+            st.title("📋 View Orders")
+            st.write("")
+            view_orders_page()
+
+    elif page == "👤 User Profile":
+        with st.container():
+            st.title("👤 User Profile")
+            st.write("")
+            profile_page()
 
 
 
