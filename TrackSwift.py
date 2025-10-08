@@ -117,7 +117,7 @@ def login_page():
             transition: all 0.3s ease;
         }
         form[data-testid="stForm"] button:hover {
-            background: #00785a !important;
+            background: #008170 !important;
             transform: scale(1.02);
             box-shadow: 0 0 12px rgba(0,91,65,0.6);
         }
