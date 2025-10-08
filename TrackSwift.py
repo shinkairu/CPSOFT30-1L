@@ -44,7 +44,7 @@ def login_page():
         <style>
         /* Solid black background */
         .stApp {
-            background-color: #000000 !important;
+            background-color: #0F0F0F !important;
             background-attachment: fixed;
         }
 
@@ -119,7 +119,7 @@ def login_page():
     with col2:
         st.markdown("<div class='login-bubble'>", unsafe_allow_html=True)
 
-        st.markdown("<div class='login-title'>🚚 TrackSwift Login</div>", unsafe_allow_html=True)
+        st.markdown("<div class='login-title'> TrackSwift Login</div>", unsafe_allow_html=True)
 
         st.markdown("""
             <div class='demo-text'>
