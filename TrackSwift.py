@@ -40,17 +40,84 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    st.markdown("<h1 style='text-align: center; color: #4B4BFF;'>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
-    
-    # Center form using columns
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.info("Demo accounts:\n- admin/admin\n- manager/manager\n- customer1/cust1\n- customer2/cust2\n- shipper/ship1")
-        
-        username = st.text_input("Username", placeholder="Enter your username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password")
-        
-        if st.button("Login"):
+    """
+    Minimal, robust centered login UI:
+    - Gradient background via .stApp
+    - Vertical/horizontal centering via .block-container
+    - Glass-like panel rendered with simple CSS + a single markdown wrapper
+    - All inputs inside a Streamlit form (keeps rendering stable)
+    """
+
+    # 1) page background + simple card CSS
+    st.markdown(
+        """
+        <style>
+        /* Background */
+        .stApp {
+            background: linear-gradient(135deg, #8A2BE2 0%, #7B68EE 50%, #9370DB 100%) !important;
+            background-attachment: fixed;
+        }
+
+        /* Center the main content area */
+        .block-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Glass-like panel (kept simple to avoid layout issues) */
+        .simple-glass {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255,255,255,0.10);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            color: white;
+        }
+
+        /* Input and button visuals (non-invasive selectors) */
+        .stTextInput>div>div>input {
+            background-color: rgba(255,255,255,0.14);
+            color: white;
+            border-radius: 8px;
+            padding: 8px;
+        }
+        .stButton>button {
+            background-color: #7B68EE;
+            color: white;
+            border-radius: 8px;
+            width: 100%;
+            padding: 8px 12px;
+            font-weight: 600;
+        }
+        .stButton>button:hover { background-color: #9A79FF; transform: translateY(-1px); }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # 2) render a single markdown wrapper for the glass panel
+    # NOTE: we only render ONE opening div and one closing div around the form
+    st.markdown('<div class="simple-glass">', unsafe_allow_html=True)
+
+    # Title + demo accounts (kept simple)
+    st.markdown("<h2 style='text-align:center; margin:0 0 8px 0;'>🚚 TrackSwift</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#E6E6FA; font-size:13px; margin-bottom:12px; text-align:left;'><b>Demo accounts:</b><br>admin / admin<br>manager / manager<br>customer1 / cust1<br>customer2 / cust2<br>shipper / ship1</p>", unsafe_allow_html=True)
+
+    # 3) Put inputs & button inside a Streamlit form (keeps Streamlit rendering stable)
+    with st.form("login_form"):
+        username = st.text_input("Username", placeholder="Enter your username", key="login_username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
+        submitted = st.form_submit_button("Login")
+
+        if submitted:
+            # keep your auth logic intact
             role = authenticate_user(username, password)
             if role:
                 st.session_state.logged_in = True
@@ -60,6 +127,9 @@ def login_page():
                 st.experimental_rerun()
             else:
                 st.error("Invalid credentials. Try again.")
+
+    # close the glass panel wrapper
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
