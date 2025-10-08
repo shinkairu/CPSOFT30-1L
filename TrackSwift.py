@@ -48,7 +48,7 @@ def login_page():
             background-attachment: fixed;
         }
 
-        /* Center bubble vertically */
+        /* Center everything vertically and horizontally */
         .block-container {
             min-height: 100vh;
             display: flex;
@@ -56,14 +56,28 @@ def login_page():
             justify-content: center;
         }
 
+        /* Glass bubble (new!) */
+        .login-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 18px;
+            padding: 2.5rem 2rem;
+            width: 90%;
+            max-width: 360px; /* 👈 tighter width */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
 
         /* Title styling */
         .login-title {
-            color: #008170;
-            font-size: 6rem;
-            font-weight: 700;
+            color: #005B41;
+            font-size: 2rem;
+            font-weight: 800;
             text-align: center;
             margin-bottom: 1.5rem;
+            letter-spacing: 1px;
         }
 
         /* Demo account box */
@@ -73,14 +87,14 @@ def login_page():
             background: rgba(255, 255, 255, 0.1);
             padding: 10px;
             border-radius: 10px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             text-align: left;
         }
 
         /* Input fields */
         .stTextInput>div>div>input {
             background: rgba(255, 255, 255, 0.2) !important;
-            color: #0F0F0F !important;
+            color: #ffffff !important;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
@@ -95,8 +109,8 @@ def login_page():
             color: #ffffff !important;
             font-weight: 600 !important;
             border-radius: 10px !important;
-            padding: 0.6rem 0 !important;
-            width: 150%;
+            padding: 0.8rem 0 !important;
+            width: 100% !important; /* perfectly fits inside bubble */
             border: none !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
@@ -119,7 +133,7 @@ def login_page():
     with col2:
         st.markdown("<div class='login-bubble'>", unsafe_allow_html=True)
 
-        st.markdown("<div class='login-title'> TrackSwift Login</div>", unsafe_allow_html=True)
+        st.markdown("<div class='login-title'>TrackSwift Login</div>", unsafe_allow_html=True)
 
         st.markdown("""
             <div class='demo-text'>
@@ -147,6 +161,7 @@ def login_page():
                 st.error("Invalid credentials. Try again.")
 
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 def main_app():
