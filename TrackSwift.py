@@ -40,7 +40,7 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- Background Gradient ---
+    # --- Background Gradient and Glass Styling ---
     st.markdown("""
         <style>
         .stApp {
@@ -48,68 +48,73 @@ def login_page():
             background-attachment: fixed;
         }
 
-        /* Centered glass bubble container */
-        .login-card {
-            background: rgba(255, 255, 255, 0.15);
+        /* Glass bubble container */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.18);
             padding: 3rem 2.5rem;
             border-radius: 20px;
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             text-align: center;
+            width: 100%;
         }
 
-        h1 {
-            color: white !important;
-            text-align: center;
+        /* Center everything vertically */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        label, p, span, .stTextInput input, .stButton button {
+        h1, p, label, span {
             color: white !important;
+        }
+
+        .stTextInput > div > div > input {
+            color: white !important;
+            background-color: rgba(255,255,255,0.1);
         }
 
         .stButton button {
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.25);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            transition: 0.3s;
         }
-
         .stButton button:hover {
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: rgba(255,255,255,0.4);
             transform: scale(1.03);
         }
         </style>
     """, unsafe_allow_html=True)
 
-    # --- Add spacing to center vertically ---
-    st.markdown("<div style='height: 15vh'></div>", unsafe_allow_html=True)
+    # --- Center bubble in middle of screen ---
+    st.markdown("<div class='login-wrapper'><div class='glass-card'>", unsafe_allow_html=True)
 
-    # --- Layout: center column only ---
-    col1, col2, col3 = st.columns([1, 2, 1])
+    # --- All content INSIDE bubble ---
+    st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+    st.markdown("<p>Demo accounts:</p>", unsafe_allow_html=True)
+    st.write("admin/admin • manager/manager • customer1/cust1 • customer2/cust2 • shipper/ship1")
 
-    with col2:
-        st.markdown('<div class="login-card">', unsafe_allow_html=True)
+    username = st.text_input("Username", placeholder="Enter your username")
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
 
-        st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
-        st.markdown("<p>Demo accounts:</p>", unsafe_allow_html=True)
-        st.write("admin/admin • manager/manager • customer1/cust1 • customer2/cust2 • shipper/ship1")
+    if st.button("Login"):
+        role = authenticate_user(username, password)
+        if role:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = role
+            st.success(f"Welcome, {username}!")
+            st.experimental_rerun()
+        else:
+            st.error("Invalid credentials. Try again.")
 
-        username = st.text_input("Username", placeholder="Enter your username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password")
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
-        if st.button("Login"):
-            role = authenticate_user(username, password)
-            if role:
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.session_state.role = role
-                st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
-            else:
-                st.error("Invalid credentials. Try again.")
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
 
 
