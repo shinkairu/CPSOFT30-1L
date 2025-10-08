@@ -74,8 +74,8 @@ def login_page():
         }
 
         /* Title styling (center + #005B41 color) */
-        form[data-testid="stForm"] h2 {
-            color: #008170 !important;
+        form[data-testid="stForm"] h1 {
+            color: #25B847!important;
             text-align: center !important;
             font-size: 1.8rem !important;
             margin-bottom: 1.2rem;
@@ -84,7 +84,7 @@ def login_page():
 
         /* Demo accounts box */
         .demo-text {
-            color: #eaeaea;
+            color: #ffffff;
             text-align: left;
             margin-bottom: 1.2rem;
             font-size: 14px;
