@@ -224,3 +224,60 @@ def get_all_data_for_dashboard() -> Tuple[pd.DataFrame, pd.DataFrame]:
         except Exception:
             pass
     return shipments_df, orders_df
+
+# ---------------------- Streamlit Page Functions ----------------------
+
+import streamlit as st
+
+def dashboard_page():
+    st.subheader("📊 Dashboard")
+    shipments, orders = get_all_data_for_dashboard()
+    st.write("### Shipments Overview")
+    st.dataframe(shipments)
+    st.write("### Orders Overview")
+    st.dataframe(orders)
+
+def add_shipment_page():
+    st.subheader("➕ Add New Shipment")
+    with st.form("add_shipment_form"):
+        sender_name = st.text_input("Sender Name")
+        receiver_name = st.text_input("Receiver Name")
+        origin = st.text_input("Origin")
+        destination = st.text_input("Destination")
+        status = st.selectbox("Status", ["Pending", "In Transit", "Delivered"])
+        tracking_id = st.text_input("Tracking ID")
+        submitted = st.form_submit_button("Add Shipment")
+
+        if submitted:
+            if sender_name and receiver_name and origin and destination and tracking_id:
+                shipment_id = add_shipment(
+                    sender_name, receiver_name, origin, destination, status,
+                    tracking_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    st.session_state.username
+                )
+                st.success(f"Shipment added successfully! ID: {shipment_id}")
+            else:
+                st.warning("Please fill out all required fields.")
+
+def track_shipment_page():
+    st.subheader("🔍 Track Shipment")
+    tracking_id = st.text_input("Enter Tracking ID")
+    if tracking_id:
+        df = get_shipments(tracking_id)
+        if not df.empty:
+            st.dataframe(df)
+        else:
+            st.warning("No shipment found with that tracking ID.")
+
+def view_orders_page():
+    st.subheader("📋 View Orders")
+    df = get_orders()
+    st.dataframe(df)
+
+def profile_page():
+    st.subheader("👤 User Profile")
+    st.info(f"Logged in as: {st.session_state.username}")
+
+
+
+
