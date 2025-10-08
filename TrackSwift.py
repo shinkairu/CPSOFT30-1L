@@ -40,97 +40,106 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # Gradient background and centered layout
-    st.markdown("""
+    # Safe, robust CSS that centers the card using .block-container
+    st.markdown(
+        """
         <style>
-        .stApp {
-            background: linear-gradient(135deg, #8A2BE2, #7B68EE, #9370DB);
+        :root { --card-bg: rgba(255,255,255,0.12); }
+
+        /* Make the main Streamlit content area a flex container and center children */
+        .block-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 0;
+            padding-bottom: 0;
+            background: linear-gradient(135deg, #8A2BE2 0%, #7B68EE 50%, #9370DB 100%);
             background-attachment: fixed;
         }
 
-        /* Center vertically */
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 90vh;
-        }
-
-        /* Glass-style login box */
+        /* The glass/login card */
         .login-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 2.5rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 28px;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.25);
-            color: white;
-            text-align: center;
+            max-width: 420px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            color: #ffffff;
         }
 
-        /* Inputs and button */
+        /* Make title sit nicely */
+        .login-card h2 {
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        /* Styled demo text */
+        .demo-text { color: #E6E6FA; font-size: 14px; text-align: left; margin-bottom: 12px; }
+
+        /* Inputs and button style (keeps Streamlit structure intact) */
         .stTextInput>div>div>input {
-            background-color: rgba(255,255,255,0.2);
+            background-color: rgba(255,255,255,0.14);
             color: white;
-            border-radius: 10px;
+            border-radius: 8px;
+            padding: 10px;
         }
-        .stTextInput>div>div>input::placeholder {
-            color: #e0d7ff;
-        }
+        .stTextInput>div>div>input::placeholder { color: #e0d7ff; }
+
         .stButton>button {
             background-color: #7B68EE;
             color: white;
+            border-radius: 8px;
+            padding: 8px 12px;
             border: none;
-            border-radius: 10px;
-            padding: 0.6rem 1rem;
-            font-weight: bold;
-            transition: 0.3s;
+            font-weight: 600;
             width: 100%;
         }
-        .stButton>button:hover {
-            background-color: #9A79FF;
-            transform: scale(1.03);
-        }
+        .stButton>button:hover { background-color: #9A79FF; transform: translateY(-1px); }
+
+        /* Keep error/success messages visible on card */
+        .stAlert { color: white; }
         </style>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True,
+    )
 
-    # Main centered layout using HTML container
-    st.markdown("<div class='main-container'>", unsafe_allow_html=True)
-    st.markdown("<div class='login-card'>", unsafe_allow_html=True)
+    # Render the card HTML wrapper and use a Streamlit form inside it
+    st.markdown('<div class="login-card">', unsafe_allow_html=True)
 
-    st.markdown("<h2 style='text-align:center; color:white;'>🚚 TrackSwift Login</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align:center;'>🚚 TrackSwift Login</h2>", unsafe_allow_html=True)
 
-    # Demo accounts info
-    st.markdown("""
-    <p style='color:#E6E6FA; font-size:14px; text-align:left;'>
-    <b>Demo accounts:</b><br>
-    - admin / admin<br>
-    - manager / manager<br>
-    - customer1 / cust1<br>
-    - customer2 / cust2<br>
-    - shipper / ship1
-    </p>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        "<div class='demo-text'><b>Demo accounts:</b><br>"
+        "- admin / admin<br>"
+        "- manager / manager<br>"
+        "- customer1 / cust1<br>"
+        "- customer2 / cust2<br>"
+        "- shipper / ship1</div>",
+        unsafe_allow_html=True,
+    )
 
-    # Input fields
-    username = st.text_input("Username", placeholder="Enter your username")
-    password = st.text_input("Password", type="password", placeholder="Enter your password")
+    # Use st.form so button and inputs are grouped (prevents layout oddities)
+    with st.form("login_form"):
+        username = st.text_input("Username", placeholder="Enter your username", key="login_username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
+        submitted = st.form_submit_button("Login")
 
-    # Login button
-    if st.button("Login"):
-        role = authenticate_user(username, password)
-        if role:
-            st.session_state.logged_in = True
-            st.session_state.username = username
-            st.session_state.role = role
-            st.success(f"Welcome, {username}!")
-            st.experimental_rerun()
-        else:
-            st.error("Invalid credentials. Try again.")
+        if submitted:
+            role = authenticate_user(username, password)
+            if role:
+                st.session_state.logged_in = True
+                st.session_state.username = username
+                st.session_state.role = role
+                st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
+            else:
+                st.error("Invalid credentials. Try again.")
 
-    st.markdown("</div>", unsafe_allow_html=True)  # close login-card
-    st.markdown("</div>", unsafe_allow_html=True)  # close main-container
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 
