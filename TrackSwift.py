@@ -40,35 +40,36 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # Gradient background and centered form
+    # Gradient background and centered layout
     st.markdown("""
         <style>
-        /* Gradient background */
         .stApp {
             background: linear-gradient(135deg, #8A2BE2, #7B68EE, #9370DB);
             background-attachment: fixed;
         }
 
-        /* Center the login form vertically */
-        div[data-testid="stVerticalBlock"] {
+        /* Center vertically */
+        .main-container {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 90vh;
         }
 
-        /* Login card styling */
+        /* Glass-style login box */
         .login-card {
-            background-color: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
             border-radius: 20px;
-            padding: 3rem 2rem;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.25);
             color: white;
             text-align: center;
         }
 
-        /* Input field and button styles */
+        /* Inputs and button */
         .stTextInput>div>div>input {
             background-color: rgba(255,255,255,0.2);
             color: white;
@@ -85,6 +86,7 @@ def login_page():
             padding: 0.6rem 1rem;
             font-weight: bold;
             transition: 0.3s;
+            width: 100%;
         }
         .stButton>button:hover {
             background-color: #9A79FF;
@@ -93,43 +95,42 @@ def login_page():
         </style>
     """, unsafe_allow_html=True)
 
-    # Header text
-    st.markdown("<h1 style='text-align: center; color: white;'>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+    # Main centered layout using HTML container
+    st.markdown("<div class='main-container'>", unsafe_allow_html=True)
+    st.markdown("<div class='login-card'>", unsafe_allow_html=True)
 
-    # Centered login card
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown("<div class='login-card'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align:center; color:white;'>🚚 TrackSwift Login</h2>", unsafe_allow_html=True)
 
-        # Replaced blue info box with styled text
-        st.markdown("""
-        <p style='color:#E6E6FA; font-size:14px; text-align:left;'>
-        <b>Demo accounts:</b><br>
-        - admin / admin<br>
-        - manager / manager<br>
-        - customer1 / cust1<br>
-        - customer2 / cust2<br>
-        - shipper / ship1
-        </p>
-        """, unsafe_allow_html=True)
+    # Demo accounts info
+    st.markdown("""
+    <p style='color:#E6E6FA; font-size:14px; text-align:left;'>
+    <b>Demo accounts:</b><br>
+    - admin / admin<br>
+    - manager / manager<br>
+    - customer1 / cust1<br>
+    - customer2 / cust2<br>
+    - shipper / ship1
+    </p>
+    """, unsafe_allow_html=True)
 
-        # Username and password fields
-        username = st.text_input("Username", placeholder="Enter your username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password")
+    # Input fields
+    username = st.text_input("Username", placeholder="Enter your username")
+    password = st.text_input("Password", type="password", placeholder="Enter your password")
 
-        # Login button
-        if st.button("Login"):
-            role = authenticate_user(username, password)
-            if role:
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.session_state.role = role
-                st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
-            else:
-                st.error("Invalid credentials. Try again.")
+    # Login button
+    if st.button("Login"):
+        role = authenticate_user(username, password)
+        if role:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = role
+            st.success(f"Welcome, {username}!")
+            st.experimental_rerun()
+        else:
+            st.error("Invalid credentials. Try again.")
 
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)  # close login-card
+    st.markdown("</div>", unsafe_allow_html=True)  # close main-container
 
 
 
