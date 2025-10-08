@@ -120,8 +120,7 @@ def login_page():
     )
 
     # ---- Login Form UI ----
-    st.markdown("<div class='login-card'>", unsafe_allow_html=True)
-    st.markdown("<div class='login-title'>🚚 TrackSwift Login</div>", unsafe_allow_html=True)
+    st.markdown("<div class='login-card'>🚚 TrackSwift Login</div> ", unsafe_allow_html=True)
 
     # Demo account info
     st.markdown("""
