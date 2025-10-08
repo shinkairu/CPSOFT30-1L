@@ -40,16 +40,84 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    st.markdown("<h1 style='text-align: center; color: #4B4BFF;'>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
-    
-    # Center form using columns
+    # Gradient background and centered form
+    st.markdown("""
+        <style>
+        /* Gradient background */
+        .stApp {
+            background: linear-gradient(135deg, #8A2BE2, #7B68EE, #9370DB);
+            background-attachment: fixed;
+        }
+
+        /* Center the login form vertically */
+        div[data-testid="stVerticalBlock"] {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+        }
+
+        /* Login card styling */
+        .login-card {
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.2);
+            color: white;
+            text-align: center;
+        }
+
+        /* Input field and button styles */
+        .stTextInput>div>div>input {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 10px;
+        }
+        .stTextInput>div>div>input::placeholder {
+            color: #e0d7ff;
+        }
+        .stButton>button {
+            background-color: #7B68EE;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .stButton>button:hover {
+            background-color: #9A79FF;
+            transform: scale(1.03);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Header text
+    st.markdown("<h1 style='text-align: center; color: white;'>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
+
+    # Centered login card
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.info("Demo accounts:\n- admin/admin\n- manager/manager\n- customer1/cust1\n- customer2/cust2\n- shipper/ship1")
-        
+        st.markdown("<div class='login-card'>", unsafe_allow_html=True)
+
+        # Replaced blue info box with styled text
+        st.markdown("""
+        <p style='color:#E6E6FA; font-size:14px; text-align:left;'>
+        <b>Demo accounts:</b><br>
+        - admin / admin<br>
+        - manager / manager<br>
+        - customer1 / cust1<br>
+        - customer2 / cust2<br>
+        - shipper / ship1
+        </p>
+        """, unsafe_allow_html=True)
+
+        # Username and password fields
         username = st.text_input("Username", placeholder="Enter your username")
         password = st.text_input("Password", type="password", placeholder="Enter your password")
-        
+
+        # Login button
         if st.button("Login"):
             role = authenticate_user(username, password)
             if role:
@@ -60,6 +128,9 @@ def login_page():
                 st.experimental_rerun()
             else:
                 st.error("Invalid credentials. Try again.")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
