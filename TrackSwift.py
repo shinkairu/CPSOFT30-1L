@@ -40,17 +40,17 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- CSS: violet gradient background + upgraded glass bubble styling ---
+    # --- CSS: solid black background + glass bubble + centered title ---
     st.markdown(
         """
         <style>
-        /* Full gradient background */
+        /* Solid background */
         .stApp {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%) !important;
+            background: #000000 !important;
             background-attachment: fixed;
         }
 
-        /* Center the bubble vertically and horizontally */
+        /* Center bubble vertically */
         .block-container {
             min-height: 100vh;
             display: flex;
@@ -60,69 +60,69 @@ def login_page():
             padding-bottom: 0;
         }
 
-        /* The glass bubble form */
+        /* Glass bubble form */
         form[data-testid="stForm"] {
-            background: rgba(255, 255, 255, 0.18);
-            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 2.8rem;
             border-radius: 18px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* Title styling */
+        /* Title styling (center + #005B41 color) */
         form[data-testid="stForm"] h2 {
-            color: #ffffff;
-            text-align: center;
-            text-shadow: 0 0 8px rgba(255,255,255,0.5);
-            margin-bottom: 1rem;
+            color: #005B41 !important;
+            text-align: center !important;
+            font-size: 1.8rem !important;
+            margin-bottom: 1.2rem;
+            font-weight: 700;
         }
 
-        /* Demo text */
+        /* Demo accounts box */
         .demo-text {
-            color: #f0f0f0;
+            color: #eaeaea;
             text-align: left;
             margin-bottom: 1.2rem;
             font-size: 14px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             padding: 8px 10px;
             border-radius: 8px;
         }
 
-        /* Input boxes */
+        /* Input fields */
         form[data-testid="stForm"] .stTextInput>div>div>input {
-            background: rgba(255, 255, 255, 0.25) !important;
+            background: rgba(255, 255, 255, 0.2) !important;
             color: #ffffff !important;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
         form[data-testid="stForm"] label {
             color: #ffffff !important;
-            text-shadow: 0 0 5px rgba(0,0,0,0.3);
         }
 
         /* Button style */
         form[data-testid="stForm"] button {
-            background: linear-gradient(90deg, #8A2BE2 0%, #6A5ACD 100%) !important;
+            background: #005B41 !important;
             color: #ffffff !important;
             font-weight: 600 !important;
             border: none !important;
             border-radius: 10px !important;
             padding: 0.6rem 0 !important;
             width: 100% !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: all 0.3s ease;
         }
         form[data-testid="stForm"] button:hover {
-            background: linear-gradient(90deg, #9B30FF 0%, #7B68EE 100%) !important;
+            background: #00785a !important;
             transform: scale(1.02);
-            box-shadow: 0 0 12px rgba(155,48,255,0.6);
+            box-shadow: 0 0 12px rgba(0,91,65,0.6);
         }
 
-        /* Text inside messages */
+        /* General text fix */
         div[data-testid="stMarkdownContainer"] p, span {
             color: #ffffff !important;
         }
@@ -131,7 +131,7 @@ def login_page():
         unsafe_allow_html=True,
     )
 
-    # --- Content ---
+    # --- Centered login form ---
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         with st.form("login_form"):
