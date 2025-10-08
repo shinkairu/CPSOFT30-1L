@@ -40,67 +40,75 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # Proper gradient + glass design
-    st.markdown(
-        """
+    # --- Styles ---
+    st.markdown("""
         <style>
         .stApp {
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             background-attachment: fixed;
         }
-        .glass-box {
+        .login-card {
             background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 2.5rem;
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
             color: white;
         }
-        h1 {
-            color: white !important;
+        .login-title {
             text-align: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        hr {
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-bottom: 1.5rem;
         }
         </style>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
-    # Center layout
+    # --- Layout (center the bubble) ---
+    st.markdown("<br><br><br>", unsafe_allow_html=True)  # top spacing
     col1, col2, col3 = st.columns([1, 2, 1])
+
     with col2:
-        st.markdown('<div class="glass-box">', unsafe_allow_html=True)
+        # Glass-like card container
+        with st.container():
+            st.markdown('<div class="login-card">', unsafe_allow_html=True)
 
-        # TrackSwift Title inside bubble
-        st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
-        st.markdown("<hr style='border: 1px solid rgba(255,255,255,0.3);'>", unsafe_allow_html=True)
+            # Title inside bubble
+            st.markdown('<div class="login-title">🚚 TrackSwift Login</div>', unsafe_allow_html=True)
+            st.markdown("<hr>", unsafe_allow_html=True)
 
-        # Demo info + login fields
-        st.markdown(
-            "**Demo accounts:**  \n"
-            "- admin/admin  \n"
-            "- manager/manager  \n"
-            "- customer1/cust1  \n"
-            "- customer2/cust2  \n"
-            "- shipper/ship1"
-        )
+            # Demo accounts info
+            st.markdown(
+                "**Demo accounts:**  \n"
+                "- admin/admin  \n"
+                "- manager/manager  \n"
+                "- customer1/cust1  \n"
+                "- customer2/cust2  \n"
+                "- shipper/ship1"
+            )
 
-        username = st.text_input("Username", placeholder="Enter your username")
-        password = st.text_input("Password", type="password", placeholder="Enter your password")
+            # Input fields
+            username = st.text_input("Username", placeholder="Enter your username")
+            password = st.text_input("Password", type="password", placeholder="Enter your password")
 
-        if st.button("Login"):
-            role = authenticate_user(username, password)
-            if role:
-                st.session_state.logged_in = True
-                st.session_state.username = username
-                st.session_state.role = role
-                st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
-            else:
-                st.error("Invalid credentials. Try again.")
+            # Login button logic
+            if st.button("Login"):
+                role = authenticate_user(username, password)
+                if role:
+                    st.session_state.logged_in = True
+                    st.session_state.username = username
+                    st.session_state.role = role
+                    st.success(f"Welcome, {username}!")
+                    st.experimental_rerun()
+                else:
+                    st.error("Invalid credentials. Try again.")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 
 
