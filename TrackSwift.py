@@ -65,42 +65,58 @@ def login_page():
 # Main App Layout (after login)
 def main_app():
     # ---------------- Sidebar Navigation ----------------
-    st.sidebar.title("📋 Navigation")  # optional, can use markdown for styling
-    
-    # Step 2: Improved sidebar with separator and info
+    st.sidebar.title("📋 Navigation")
+
+    # Improved sidebar
     page = st.sidebar.selectbox(
         "Choose a section:",
         ["🏠 Dashboard", "📦 Add Shipment", "🔍 Track Shipment", "📋 View Orders", "👤 User Profile"]
     )
 
-    st.sidebar.markdown("---")  # Separator line
+    st.sidebar.markdown("---")  # Divider line
 
-    # Role info and logout button
-    st.sidebar.markdown(f"**Logged in as:** {st.session_state.username} ({st.session_state.role})")
+    # Logged-in user info and logout button
+    if "username" in st.session_state and "role" in st.session_state:
+        st.sidebar.markdown(f"**Logged in as:** {st.session_state.username} ({st.session_state.role})")
+
     if st.sidebar.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.session_state.username = None
         st.session_state.role = None
         st.experimental_rerun()
 
-
-   # Role-based access info
-    st.sidebar.info(f"Logged in as: {st.session_state.username} ({st.session_state.role})")
-
+    # ---------------- Main Page Display ----------------
+    # Step 3: Page layout using containers and spacing
     if page == "🏠 Dashboard":
-        dashboard_page()
+        with st.container():
+            st.title("📊 Dashboard Overview")
+            st.write("")  # Adds spacing
+            app.dashboard_page()
 
     elif page == "📦 Add Shipment":
-        add_shipment_page()
+        with st.container():
+            st.title("➕ Add New Shipment")
+            st.write("")
+            app.add_shipment_page()
 
     elif page == "🔍 Track Shipment":
-        track_shipment_page()
+        with st.container():
+            st.title("🔍 Track Shipment")
+            st.write("")
+            app.track_shipment_page()
 
     elif page == "📋 View Orders":
-        view_orders_page()
+        with st.container():
+            st.title("📋 View Orders")
+            st.write("")
+            app.view_orders_page()
 
     elif page == "👤 User Profile":
-        profile_page()
+        with st.container():
+            st.title("👤 User Profile")
+            st.write("")
+            app.profile_page()
+
 
 # Dashboard Page
 def dashboard_page():
