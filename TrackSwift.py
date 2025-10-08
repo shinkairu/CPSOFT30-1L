@@ -40,17 +40,17 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- CSS: gradient background + style the login FORM as the single glass bubble ---
+    # --- CSS: violet gradient background + upgraded glass bubble styling ---
     st.markdown(
         """
         <style>
-        /* Full-page violet gradient */
+        /* Full gradient background */
         .stApp {
-            background: linear-gradient(135deg, #7F00FF 0%, #E100FF 100%) !important;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%) !important;
             background-attachment: fixed;
         }
 
-        /* Center the block container so bubble is centered on screen */
+        /* Center the bubble vertically and horizontally */
         .block-container {
             min-height: 100vh;
             display: flex;
@@ -60,59 +60,70 @@ def login_page():
             padding-bottom: 0;
         }
 
-        /* Target the Streamlit form element (the login form) and make it the single bubble */
+        /* The glass bubble form */
         form[data-testid="stForm"] {
-            background: rgba(255, 255, 255, 0.12);
-            padding: 28px 28px;
-            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 2.5rem;
+            border-radius: 18px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* Title & text inside the bubble */
-        form[data-testid="stForm"] h1,
+        /* Title styling */
         form[data-testid="stForm"] h2 {
             color: #ffffff;
-            margin: 0 0 8px 0;
             text-align: center;
+            text-shadow: 0 0 8px rgba(255,255,255,0.5);
+            margin-bottom: 1rem;
         }
+
+        /* Demo text */
         .demo-text {
-            color: #E6E6FA;
+            color: #f0f0f0;
             text-align: left;
-            margin-bottom: 12px;
+            margin-bottom: 1.2rem;
             font-size: 14px;
-        }
-
-        /* Style inputs that live inside the form */
-        form[data-testid="stForm"] .stTextInput>div>div>input,
-        form[data-testid="stForm"] .stTextInput>div>div>textarea {
-            background: rgba(255,255,255,0.06) !important;
-            color: #fff !important;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 10px;
             border-radius: 8px;
-            padding: 8px;
         }
 
-        /* Style the form submit button inside bubble */
+        /* Input boxes */
+        form[data-testid="stForm"] .stTextInput>div>div>input {
+            background: rgba(255, 255, 255, 0.25) !important;
+            color: #ffffff !important;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        form[data-testid="stForm"] label {
+            color: #ffffff !important;
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        /* Button style */
         form[data-testid="stForm"] button {
-            background-color: #7B68EE !important;
-            color: white !important;
-            border-radius: 8px !important;
-            padding: 8px 12px !important;
-            width: 100% !important;
+            background: linear-gradient(90deg, #8A2BE2 0%, #6A5ACD 100%) !important;
+            color: #ffffff !important;
             font-weight: 600 !important;
             border: none !important;
+            border-radius: 10px !important;
+            padding: 0.6rem 0 !important;
+            width: 100% !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
         }
         form[data-testid="stForm"] button:hover {
-            background-color: #9A79FF !important;
-            transform: translateY(-1px);
+            background: linear-gradient(90deg, #9B30FF 0%, #7B68EE 100%) !important;
+            transform: scale(1.02);
+            box-shadow: 0 0 12px rgba(155,48,255,0.6);
         }
 
-        /* Keep other text white */
-        label, p, span {
+        /* Text inside messages */
+        div[data-testid="stMarkdownContainer"] p, span {
             color: #ffffff !important;
         }
         </style>
@@ -120,30 +131,29 @@ def login_page():
         unsafe_allow_html=True,
     )
 
-    # --- Content: a single Streamlit form (all widgets go inside it) ---
-    # Using columns to center horizontally (form itself is centered via .block-container)
+    # --- Content ---
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        # All UI goes inside this form so CSS above styles exactly one bubble (the form)
         with st.form("login_form"):
             st.markdown("<h2>🚚 TrackSwift Login</h2>", unsafe_allow_html=True)
 
-            # Demo accounts text (inside bubble)
             st.markdown(
-                "<div class='demo-text'><b>Demo accounts:</b><br>"
-                "- admin / admin<br>"
-                "- manager / manager<br>"
-                "- customer1 / cust1<br>"
-                "- customer2 / cust2<br>"
-                "- shipper / ship1</div>",
+                """
+                <div class='demo-text'>
+                <b>Demo accounts:</b><br>
+                - admin / admin<br>
+                - manager / manager<br>
+                - customer1 / cust1<br>
+                - customer2 / cust2<br>
+                - shipper / ship1
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
 
-            # Inputs (these render inside the same <form>)
             username = st.text_input("Username", placeholder="Enter your username", key="login_username")
             password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
 
-            # Submit button — this is inside the form element, so it's part of the bubble
             submitted = st.form_submit_button("Login")
 
             if submitted:
@@ -156,7 +166,6 @@ def login_page():
                     st.experimental_rerun()
                 else:
                     st.error("Invalid credentials. Try again.")
-
 
 # Main App Layout (after login)
 def main_app():
