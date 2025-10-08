@@ -165,10 +165,15 @@ def main_app():
     # ---------------- Sidebar Navigation ----------------
     st.sidebar.title("📋 Navigation")
 
-    page = st.sidebar.selectbox(
-        "Choose a section:",
-        ["🏠 Dashboard", "📦 Add Shipment", "🔍 Track Shipment", "📋 View Orders", "👤 User Profile"]
-    )
+    role = st.session_state.get("role", "customer")
+
+    # 👤 Role-based pages
+    if role in ["customer", "cust1", "cust2"]:
+        pages = ["🏠 Dashboard", "👤 User Profile", "🔍 Track Shipment"]
+    else:
+        pages = ["🏠 Dashboard", "📦 Add Shipment", "🔍 Track Shipment", "📋 View Orders", "👤 User Profile"]
+
+    page = st.sidebar.selectbox("Choose a section:", pages)
 
     st.sidebar.markdown("---")  # Divider line
 
@@ -182,36 +187,31 @@ def main_app():
         st.rerun()
 
     # ---------------- Main Page Display ----------------
-    # Use the local page functions (not app.<function>) — they are defined in this file
     if page == "🏠 Dashboard":
         with st.container():
             st.title("📊 Dashboard Overview")
-            st.write("")  # Adds spacing
             dashboard_page()
 
     elif page == "📦 Add Shipment":
         with st.container():
             st.title("➕ Add New Shipment")
-            st.write("")
             add_shipment_page()
 
     elif page == "🔍 Track Shipment":
         with st.container():
             st.title("🔍 Track Shipment")
-            st.write("")
             track_shipment_page()
 
     elif page == "📋 View Orders":
         with st.container():
             st.title("📋 View Orders")
-            st.write("")
             view_orders_page()
 
     elif page == "👤 User Profile":
         with st.container():
             st.title("👤 User Profile")
-            st.write("")
             profile_page()
+
 
 
 
