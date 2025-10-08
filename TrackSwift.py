@@ -57,7 +57,13 @@ def login_page():
             background: linear-gradient(135deg, #8A2BE2 0%, #7B68EE 50%, #9370DB 100%) !important;
             background-attachment: fixed;
         }
-
+    
+        /* Hide the default sidebar (which appears as a ghost bubble) */
+        [data-testid="stSidebar"], .css-1d391kg, .css-ng1t4o {
+            display: none !important;
+            visibility: hidden !important;
+        }
+    
         /* Center the main content area */
         .block-container {
             min-height: 100vh;
@@ -67,6 +73,7 @@ def login_page():
             padding-top: 0;
             padding-bottom: 0;
         }
+
 
         /* Glass-like panel (kept simple to avoid layout issues) */
         .simple-glass {
