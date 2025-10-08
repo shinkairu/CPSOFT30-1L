@@ -152,7 +152,7 @@ def login_page():
                 st.session_state.username = username
                 st.session_state.role = role
                 st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Invalid credentials. Try again.")
 
@@ -179,7 +179,7 @@ def main_app():
         st.session_state.logged_in = False
         st.session_state.username = None
         st.session_state.role = None
-        st.experimental_rerun()
+        st.rerun()
 
     # ---------------- Main Page Display ----------------
     # Use the local page functions (not app.<function>) — they are defined in this file
@@ -316,7 +316,7 @@ def track_shipment_page():
                 if st.button("Update Status"):
                     update_shipment_status(tracking_id, new_status)
                     st.success(f"Status updated to {new_status}!")
-                    st.experimental_rerun()
+                    st.rerun()
             else:
                 st.info("Only admins/managers can update status.")
         else:
@@ -347,7 +347,7 @@ def view_orders_page():
         if st.button("Save Changes"):
             # For demo, just show success (in real app, update DB row-by-row)
             st.success("Changes saved! (Demo mode - updates reflected on refresh)")
-            st.experimental_rerun()
+            st.rerun()
     else:
         if st.session_state.role not in ['admin', 'manager']:
             st.info("Basic users can view but not edit.")
