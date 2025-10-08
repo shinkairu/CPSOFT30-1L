@@ -81,7 +81,7 @@ def login_page():
         /* Input fields */
         .stTextInput>div>div>input {
             background: rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important;
+            color: #232D3F !important;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 0.4rem !important;
