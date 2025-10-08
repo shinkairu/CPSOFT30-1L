@@ -60,7 +60,7 @@ def login_page():
 
         /* Title styling */
         .login-title {
-            color: #005B41;
+            color: #00BA9F;
             font-size: 4.5rem;
             font-weight: 700;
             text-align: center;
@@ -94,7 +94,7 @@ def login_page():
 
         /* Button styling */
         div.stButton > button {
-            background-color: #005B41 !important;
+            background-color: #00BA9F !important;
             color: #ffffff !important;
             font-weight: 600 !important;
             border-radius: 10px !important;
