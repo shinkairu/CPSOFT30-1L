@@ -85,7 +85,7 @@ def login_page():
         /* Demo accounts box */
         .demo-text {
             color: #ffffff;
-            text-align: right;
+            text-align: left;
             margin-bottom: 1.2rem;
             font-size: 14px;
             background: rgba(255,255,255,0.08);
@@ -107,7 +107,7 @@ def login_page():
         /* Button style */
         form[data-testid="stForm"] button {
             background: #005B41 !important;
-            color: #ffffff !important;
+            color: #008170 !important;
             font-weight: 600 !important;
             border: none !important;
             border-radius: 10px !important;
