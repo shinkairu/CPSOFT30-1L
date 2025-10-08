@@ -94,7 +94,7 @@ def login_page():
             background-color: #005B41 !important;
             color: #ffffff !important;
             font-weight: 600 !important;
-            border-radius: 10px !important;
+            border-radius: 15px !important;
             padding: 0.6rem 0 !important;
             width: 100%;
             border: none !important;
