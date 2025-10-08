@@ -40,50 +40,113 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- Background Gradient + Styling ---
-    st.markdown("""
+    # --- CSS: gradient background + style the login FORM as the single glass bubble ---
+    st.markdown(
+        """
         <style>
+        /* Full-page violet gradient */
         .stApp {
-            background: linear-gradient(135deg, #7F00FF 0%, #E100FF 100%);
+            background: linear-gradient(135deg, #7F00FF 0%, #E100FF 100%) !important;
             background-attachment: fixed;
         }
-        /* Center bubble */
-        .glass-bubble {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 3rem;
-            border-radius: 25px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+
+        /* Center the block container so bubble is centered on screen */
+        .block-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Target the Streamlit form element (the login form) and make it the single bubble */
+        form[data-testid="stForm"] {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 28px 28px;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* Title & text inside the bubble */
+        form[data-testid="stForm"] h1,
+        form[data-testid="stForm"] h2 {
+            color: #ffffff;
+            margin: 0 0 8px 0;
             text-align: center;
         }
-        h1 {
-            color: white !important;
-            text-align: center;
+        .demo-text {
+            color: #E6E6FA;
+            text-align: left;
+            margin-bottom: 12px;
+            font-size: 14px;
         }
-        label, p, span, .stTextInput input {
+
+        /* Style inputs that live inside the form */
+        form[data-testid="stForm"] .stTextInput>div>div>input,
+        form[data-testid="stForm"] .stTextInput>div>div>textarea {
+            background: rgba(255,255,255,0.06) !important;
+            color: #fff !important;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        /* Style the form submit button inside bubble */
+        form[data-testid="stForm"] button {
+            background-color: #7B68EE !important;
             color: white !important;
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            width: 100% !important;
+            font-weight: 600 !important;
+            border: none !important;
+        }
+        form[data-testid="stForm"] button:hover {
+            background-color: #9A79FF !important;
+            transform: translateY(-1px);
+        }
+
+        /* Keep other text white */
+        label, p, span {
+            color: #ffffff !important;
         }
         </style>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True,
+    )
 
-    # --- Layout ---
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    # --- Content: a single Streamlit form (all widgets go inside it) ---
+    # Using columns to center horizontally (form itself is centered via .block-container)
     col1, col2, col3 = st.columns([1, 2, 1])
-
     with col2:
-        # All content is wrapped inside one glass bubble
-        with st.container():
-            st.markdown('<div class="glass-bubble">', unsafe_allow_html=True)
+        # All UI goes inside this form so CSS above styles exactly one bubble (the form)
+        with st.form("login_form"):
+            st.markdown("<h2>🚚 TrackSwift Login</h2>", unsafe_allow_html=True)
 
-            st.markdown("<h1>🚚 TrackSwift Login</h1>", unsafe_allow_html=True)
-            st.markdown("#### Demo accounts:")
-            st.write("admin/admin, manager/manager, customer1/cust1, customer2/cust2, shipper/ship1")
+            # Demo accounts text (inside bubble)
+            st.markdown(
+                "<div class='demo-text'><b>Demo accounts:</b><br>"
+                "- admin / admin<br>"
+                "- manager / manager<br>"
+                "- customer1 / cust1<br>"
+                "- customer2 / cust2<br>"
+                "- shipper / ship1</div>",
+                unsafe_allow_html=True,
+            )
 
-            username = st.text_input("Username", placeholder="Enter your username")
-            password = st.text_input("Password", type="password", placeholder="Enter your password")
+            # Inputs (these render inside the same <form>)
+            username = st.text_input("Username", placeholder="Enter your username", key="login_username")
+            password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
 
-            if st.button("Login"):
+            # Submit button — this is inside the form element, so it's part of the bubble
+            submitted = st.form_submit_button("Login")
+
+            if submitted:
                 role = authenticate_user(username, password)
                 if role:
                     st.session_state.logged_in = True
@@ -93,9 +156,6 @@ def login_page():
                     st.experimental_rerun()
                 else:
                     st.error("Invalid credentials. Try again.")
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
 
 
 # Main App Layout (after login)
