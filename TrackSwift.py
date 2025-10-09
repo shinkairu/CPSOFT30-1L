@@ -151,7 +151,7 @@ def login_page():
 
             submitted = st.form_submit_button("Login")
 
-             if submitted:
+            if submitted:
                 authenticated_role = authenticate_user(username, password)
 
                 if authenticated_role:
