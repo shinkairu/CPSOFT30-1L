@@ -40,7 +40,7 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
-    # --- CSS: solid black background + glass bubble + centered title ---
+    # --- CSS ---
     st.markdown(
         """
         <style>
@@ -143,7 +143,7 @@ def login_page():
                 unsafe_allow_html=True,
             )
 
-            # ✨ NEW DROPDOWN HERE
+            # ✨ Role selector
             role = st.selectbox("Select role", ["Admin", "Manager", "Customer", "Shipper"])
 
             username = st.text_input("Username", placeholder="Enter your username", key="login_username")
@@ -154,21 +154,33 @@ def login_page():
             if submitted:
                 authenticated_role = authenticate_user(username, password)
 
+                # Mapping to normalize role comparison
+                role_map = {
+                    "admin": ["admin"],
+                    "manager": ["manager"],
+                    "customer": ["customer", "user", "customer1", "customer2"],
+                    "shipper": ["shipper", "delivery", "driver"]
+                }
+
                 if authenticated_role:
-                    if role.lower() == authenticated_role.lower():
-                        # ✅ Roles match — proceed
+                    # Normalize both sides
+                    selected = role.lower()
+                    actual = authenticated_role.lower()
+
+                    # ✅ Check if actual role belongs to selected category
+                    if actual in role_map.get(selected, []):
                         st.session_state.logged_in = True
                         st.session_state.username = username
-                        st.session_state.role = authenticated_role
-                        st.success(f"Welcome, {username}! You are logged in as {authenticated_role}.")
+                        st.session_state.role = role
+                        st.success(f"Welcome, {username}! You are logged in as {role}.")
                         st.experimental_rerun()
                     else:
-                        # 🚫 Mismatch between dropdown and real role
                         st.error(f"Role mismatch: '{username}' is actually a {authenticated_role}. Please select the correct role.")
                 else:
-                    st.error("Invalid. Try again.")
+                    st.error("Invalid credentials. Try again.")
 
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
