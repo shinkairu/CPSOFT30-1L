@@ -40,49 +40,98 @@ if not st.session_state.get('db_initialized', False):
 
 # Login Page
 def login_page():
+    # --- CSS: solid black background + glass bubble + centered title ---
     st.markdown(
         """
         <style>
-        .stApp { background: #000000 !important; }
-        .block-container {
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        /* Solid background */
+        .stApp {
+            background: #000000 !important;
+            background-attachment: fixed;
         }
+
+        /* Center bubble vertically */
+        .block-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        /* Glass bubble form */
         form[data-testid="stForm"] {
             background: rgba(255, 255, 255, 0.12);
-            padding: 2.8rem; border-radius: 18px; width: 100%; max-width: 420px;
+            padding: 2.8rem;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 420px;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
+
+        /* Title styling (center + #005B41 color) */
         form[data-testid="stForm"] h2 {
-            color: #00c48c !important; text-align: center !important; font-size: 1.8rem !important;
-            margin-bottom: 1.2rem; font-weight: 700;
+            color: #005B41 !important;
+            text-align: center !important;
+            font-size: 1.8rem !important;
+            margin-bottom: 1.2rem;
+            font-weight: 700;
         }
+
+        /* Demo accounts box */
         .demo-text {
-            color: #eaeaea; text-align: left; margin-bottom: 1.2rem; font-size: 14px;
-            background: rgba(255,255,255,0.08); padding: 8px 10px; border-radius: 8px;
+            color: #eaeaea;
+            text-align: left;
+            margin-bottom: 1.2rem;
+            font-size: 14px;
+            background: rgba(255,255,255,0.08);
+            padding: 8px 10px;
+            border-radius: 8px;
         }
+
+        /* Input fields */
         form[data-testid="stForm"] .stTextInput>div>div>input {
             background: rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important; border-radius: 10px;
+            color: #ffffff !important;
+            border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        form[data-testid="stForm"] label { color: #ffffff !important; }
+        form[data-testid="stForm"] label {
+            color: #ffffff !important;
+        }
+
+        /* Button style */
         form[data-testid="stForm"] button {
-            background: #00c48c !important; color: #ffffff !important; font-weight: 600 !important;
-            border-radius: 10px !important; padding: 0.6rem 0 !important; width: 100% !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.3s ease;
+            background: #005B41 !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            border: none !important;
+            border-radius: 10px !important;
+            padding: 0.6rem 0 !important;
+            width: 100% !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
         }
         form[data-testid="stForm"] button:hover {
-            background: #00e6a7 !important; transform: scale(1.02);
-            box-shadow: 0 0 12px rgba(0,228,164,0.6);
+            background: #00785a !important;
+            transform: scale(1.02);
+            box-shadow: 0 0 12px rgba(0,91,65,0.6);
         }
-        div[data-testid="stMarkdownContainer"] p, span { color: #ffffff !important; }
+
+        /* General text fix */
+        div[data-testid="stMarkdownContainer"] p, span {
+            color: #ffffff !important;
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    # Centered login form
+    # --- Centered login form ---
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         with st.form("login_form"):
@@ -92,39 +141,19 @@ def login_page():
                 """
                 <div class='demo-text'>
                 <b>Demo accounts:</b><br>
-                - Admin / admin<br>
-                - Manager / manager<br>
-                - Customer1 / cust1<br>
-                - Customer2 / cust2<br>
-                - Shipper / ship1
+                - admin / admin<br>
+                - manager / manager<br>
+                - customer1 / cust1<br>
+                - customer2 / cust2<br>
+                - shipper / ship1
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-            # Choose account type
-            account_type = st.selectbox(
-                "Select Account Type",
-                ["Admin", "Manager", "Customer1", "Customer2", "Shipper"]
-            )
+            username = st.text_input("Username", placeholder="Enter your username", key="login_username")
+            password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
 
-            # Autofill credentials based on choice
-            if account_type == "Admin":
-                username, password = "admin", "admin"
-            elif account_type == "Manager":
-                username, password = "manager", "manager"
-            elif account_type == "Customer1":
-                username, password = "customer1", "cust1"
-            elif account_type == "Customer2":
-                username, password = "customer2", "cust2"
-            else:
-                username, password = "shipper", "ship1"
-
-            # Show autofilled inputs (disabled for display)
-            st.text_input("Username", value=username, disabled=True)
-            st.text_input("Password", value=password, type="password", disabled=True)
-
-            # Login button
             submitted = st.form_submit_button("Login")
 
             if submitted:
