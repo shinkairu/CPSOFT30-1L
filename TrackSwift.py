@@ -151,14 +151,20 @@ def login_page():
 
             submitted = st.form_submit_button("Login")
 
-            if submitted:
+             if submitted:
                 authenticated_role = authenticate_user(username, password)
+
                 if authenticated_role:
-                    st.session_state.logged_in = True
-                    st.session_state.username = username
-                    st.session_state.role = authenticated_role
-                    st.success(f"Welcome, {username}! You are logged in as {role}.")
-                    st.experimental_rerun()
+                    if role.lower() == authenticated_role.lower():
+                        # ✅ Roles match — proceed
+                        st.session_state.logged_in = True
+                        st.session_state.username = username
+                        st.session_state.role = authenticated_role
+                        st.success(f"Welcome, {username}! You are logged in as {authenticated_role}.")
+                        st.experimental_rerun()
+                    else:
+                        # 🚫 Mismatch between dropdown and real role
+                        st.error(f"Role mismatch: '{username}' is actually a {authenticated_role}. Please select the correct role.")
                 else:
                     st.error("Invalid credentials. Try again.")
 
