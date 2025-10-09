@@ -39,6 +39,25 @@ if not st.session_state.get('db_initialized', False):
     st.session_state.db_initialized = True
 
 # Login Page
+import streamlit as st
+
+# ✅ FIXED AUTH FUNCTION (include shipper properly)
+def authenticate_user(username, password):
+    # Demo accounts
+    accounts = {
+        "admin": {"password": "admin", "role": "Admin"},
+        "manager": {"password": "manager", "role": "Manager"},
+        "customer1": {"password": "cust1", "role": "Customer"},
+        "customer2": {"password": "cust2", "role": "Customer"},
+        "shipper": {"password": "ship1", "role": "Shipper"},
+    }
+
+    user = accounts.get(username)
+    if user and user["password"] == password:
+        return user["role"]
+    return None
+
+
 def login_page():
     # --- CSS ---
     st.markdown(
@@ -154,32 +173,22 @@ def login_page():
             if submitted:
                 authenticated_role = authenticate_user(username, password)
 
-                # Mapping to normalize role comparison
-                role_map = {
-                    "admin": ["admin"],
-                    "manager": ["manager"],
-                    "customer": ["customer", "user", "customer1", "customer2"],
-                    "shipper": ["shipper", "delivery", "driver"]
-                }
-
                 if authenticated_role:
-                    # Normalize both sides
-                    selected = role.lower()
-                    actual = authenticated_role.lower()
-
-                    # ✅ Check if actual role belongs to selected category
-                    if actual in role_map.get(selected, []):
+                    if role.lower() == authenticated_role.lower():
+                        # ✅ Success
                         st.session_state.logged_in = True
                         st.session_state.username = username
-                        st.session_state.role = role
-                        st.success(f"Welcome, {username}! You are logged in as {role}.")
+                        st.session_state.role = authenticated_role
+                        st.success(f"Welcome, {username}! You are logged in as {authenticated_role}.")
                         st.experimental_rerun()
                     else:
+                        # 🚫 Role mismatch
                         st.error(f"Role mismatch: '{username}' is actually a {authenticated_role}. Please select the correct role.")
                 else:
                     st.error("Invalid credentials. Try again.")
 
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
