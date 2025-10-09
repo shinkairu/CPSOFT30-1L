@@ -44,13 +44,11 @@ def login_page():
     st.markdown(
         """
         <style>
-        /* Solid background */
         .stApp {
             background: #000000 !important;
             background-attachment: fixed;
         }
 
-        /* Center bubble vertically */
         .block-container {
             min-height: 100vh;
             display: flex;
@@ -60,7 +58,6 @@ def login_page():
             padding-bottom: 0;
         }
 
-        /* Glass bubble form */
         form[data-testid="stForm"] {
             background: rgba(255, 255, 255, 0.12);
             padding: 2.8rem;
@@ -73,16 +70,14 @@ def login_page():
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* Title styling (center + #005B41 color) */
         form[data-testid="stForm"] h2 {
-            color: #005B41 !important;
+            color: #00C896 !important;
             text-align: center !important;
             font-size: 1.8rem !important;
             margin-bottom: 1.2rem;
             font-weight: 700;
         }
 
-        /* Demo accounts box */
         .demo-text {
             color: #eaeaea;
             text-align: left;
@@ -93,7 +88,6 @@ def login_page():
             border-radius: 8px;
         }
 
-        /* Input fields */
         form[data-testid="stForm"] .stTextInput>div>div>input {
             background: rgba(255, 255, 255, 0.2) !important;
             color: #ffffff !important;
@@ -104,7 +98,6 @@ def login_page():
             color: #ffffff !important;
         }
 
-        /* Button style */
         form[data-testid="stForm"] button {
             background: #005B41 !important;
             color: #ffffff !important;
@@ -122,7 +115,6 @@ def login_page():
             box-shadow: 0 0 12px rgba(0,91,65,0.6);
         }
 
-        /* General text fix */
         div[data-testid="stMarkdownContainer"] p, span {
             color: #ffffff !important;
         }
@@ -151,24 +143,27 @@ def login_page():
                 unsafe_allow_html=True,
             )
 
+            # ✨ NEW DROPDOWN HERE
+            role = st.selectbox("Select role", ["Admin", "Manager", "Customer", "Shipper"])
+
             username = st.text_input("Username", placeholder="Enter your username", key="login_username")
             password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
 
             submitted = st.form_submit_button("Login")
 
             if submitted:
-                role = authenticate_user(username, password)
-                if role:
+                authenticated_role = authenticate_user(username, password)
+                if authenticated_role:
                     st.session_state.logged_in = True
                     st.session_state.username = username
-                    st.session_state.role = role
-                    st.success(f"Welcome, {username}!")
+                    st.session_state.role = authenticated_role
+                    st.success(f"Welcome, {username}! You are logged in as {role}.")
                     st.experimental_rerun()
                 else:
                     st.error("Invalid credentials. Try again.")
 
-
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
