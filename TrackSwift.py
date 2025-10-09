@@ -166,7 +166,7 @@ def login_page():
                         # 🚫 Mismatch between dropdown and real role
                         st.error(f"Role mismatch: '{username}' is actually a {authenticated_role}. Please select the correct role.")
                 else:
-                    st.error("Invalid credentials. Try again.")
+                    st.error("Invalid. Try again.")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
